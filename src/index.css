@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Hind+Siliguri:wght@400;500;600;700&family=Lexend:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Lexend", "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
+  --font-logo: "Comfortaa", sans-serif;
+  
+  --color-navy: #1B2F6E;
+  --color-yellow: #F5A623;
+  --color-teal: #0F7B6C;
+  --color-blue: #2D7DD2;
+  --color-navy-bg: #F8F9FF;
+  --color-text-main: #1B2F6E;
+  --color-text-muted: #5A6A8A;
+}
+
+/* Custom CSS animations as requested in rule 9 */
+@keyframes float-shape-1 {
+  0%, 100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.05) rotate(15deg);
+  }
+}
+
+@keyframes float-shape-2 {
+  0%, 100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translateY(15px) scale(0.95) rotate(-10deg);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes bounce-dot {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float-1 {
+  animation: float-shape-1 8s ease-in-out infinite;
+}
+
+.animate-float-2 {
+  animation: float-shape-2 10s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 4s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.animate-spin-fast {
+  animation: spin 0.8s linear infinite;
+}
+
+.animate-bounce-dot {
+  animation: bounce-dot 1.2s infinite ease-in-out;
+}
+
+
+/* Base style resets if any */
+body {
+  font-family: "Lexend", "Hind Siliguri", sans-serif;
+  background-color: #F8F9FF;
+  color: #1B2F6E;
+}
+
+/* Ensure Comfortaa is used for poraboo-logo */
+.logo-font {
+  font-family: "Comfortaa", sans-serif;
+  font-weight: 700;
+}
+
+/* Form Styles */
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #1B2F6E;
+  font-weight: 600;
+}
+
+.input-field,
+.input-group input[type="text"],
+.input-group input[type="url"],
+.input-group input[type="number"],
+.input-group input[type="email"],
+.input-group input[type="password"],
+.input-group select,
+.input-group textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(27, 47, 110, 0.15);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1B2F6E !important;
+  -webkit-text-fill-color: #1B2F6E !important;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.input-field:focus,
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: #F5A623;
+  box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.15);
+}
+
+.input-field::placeholder,
+.input-group input::placeholder,
+.input-group select::placeholder,
+.input-group textarea::placeholder {
+  color: #9AA5BE;
+  -webkit-text-fill-color: #9AA5BE;
+  opacity: 1;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.form-page-bg {
+  background: linear-gradient(
+    135deg,
+    rgba(248, 249, 255, 1) 0%,
+    rgba(232, 237, 254, 0.5) 50%,
+    rgba(248, 249, 255, 1) 100%
+  );
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(27, 47, 110, 0.08);
+}

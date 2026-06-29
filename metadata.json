@@ -1,0 +1,6 @@
+{
+  "name": "PORABOO",
+  "description": "A smart tuition platform from Bangladesh.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
