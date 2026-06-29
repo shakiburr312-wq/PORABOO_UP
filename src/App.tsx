@@ -9,8 +9,8 @@ import LegalModal from "./components/LegalModal";
 
 // Pages
 import Login from "./pages/Login";
+import AuthCallback from "./pages/AuthCallback";
 import Register from "./pages/Register";
-import VerifyOtp from "./pages/VerifyOtp";
 import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import TutorOnboarding from "./pages/TutorOnboarding";
@@ -19,6 +19,7 @@ import JobPostCreate from "./pages/JobPostCreate";
 import JobBoard from "./pages/JobBoard";
 import Feed from "./pages/Feed";
 import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
 
 // Supabase helper
 import { Profile, getLocalCurrentUser, setLocalCurrentUser, isSupabaseConfigured } from "./lib/supabase";
@@ -37,8 +38,7 @@ export default function App() {
   
   // Legal terms modals
   const [activeLegal, setActiveLegal] = useState<"privacy" | "terms" | "refund" | null>(null);
-  const [showDemoBanner, setShowDemoBanner] = useState(true);
-
+  
   const { t } = useLanguage();
 
   // Load user session on mount
@@ -57,15 +57,13 @@ export default function App() {
         setCurrentRoute("login");
       } else if (hash === "#/register") {
         setCurrentRoute("register");
-      } else if (hash === "#/verify-otp") {
-        setCurrentRoute("verify-otp");
-      } else if (hash === "#/forgot-password") {
+      }  else if (hash === "#/forgot-password") {
         setCurrentRoute("forgot-password");
       } else if (hash === "#/job-board") {
         const u = getLocalCurrentUser();
         if (u) setCurrentUser(u);
         setCurrentRoute("job-board");
-      } else if (hash === "#/dashboard" || hash === "#/feed" || hash === "#/tutor/onboarding" || hash === "#/guardian/dashboard" || hash === "#/guardian/post/new" || hash.startsWith("#/profile")) {
+      } else if (hash === "#/settings") { const u = getLocalCurrentUser(); if (u) { setCurrentUser(u); setCurrentRoute("settings"); } else { setCurrentRoute("login"); } } else if (hash.startsWith("#/auth/callback")) { setCurrentRoute("auth/callback"); } else if (hash === "#/dashboard" || hash === "#/feed" || hash === "#/tutor/onboarding" || hash === "#/guardian/dashboard" || hash === "#/guardian/post/new" || hash.startsWith("#/profile")) {
         const u = getLocalCurrentUser();
         if (u) {
           setCurrentUser(u);
@@ -118,11 +116,7 @@ export default function App() {
     }
   };
 
-  const handleInitiateOtpVerify = (payload: any) => {
-    setRegPayload(payload);
-    navigateTo("verify-otp");
-  };
-
+  
   const handleVerifySuccess = (user: Profile) => {
     setCurrentUser(user);
     if (user.role === 'tutor') {
@@ -136,29 +130,7 @@ export default function App() {
     <div className="relative min-h-screen bg-navy-bg text-navy flex flex-col justify-between selection:bg-yellow/30 selection:text-navy">
       <PageLoader />
       <LanguageSwitcher />
-      {/* Dynamic Demo Mode Ribbon Banner (Polite and helpful indicator) */}
-      {!isSupabaseConfigured && showDemoBanner && (
-        <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 max-w-sm bg-navy border-2 border-yellow text-white rounded-2xl p-4 shadow-2xl z-50 flex items-start gap-3 animate-fadeInUp">
-          <div className="p-1.5 rounded-lg bg-yellow/10 text-yellow mt-0.5 shrink-0">
-            <Info className="w-4 h-4" />
-          </div>
-          <div className="space-y-1 text-xs">
-            <div className="flex justify-between items-center">
-              <strong className="text-yellow text-xs font-bold uppercase tracking-wider">{t("demo_title")}</strong>
-              <button
-                onClick={() => setShowDemoBanner(false)}
-                className="text-white/60 hover:text-white p-0.5"
-                title={t("hide_banner")}
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <p className="text-white/80 leading-relaxed">
-              {t("demo_desc")}
-            </p>
-          </div>
-        </div>
-      )}
+      
 
       {/* Main Page Rendering Router */}
       {currentRoute === "home" && (
@@ -184,6 +156,7 @@ export default function App() {
         </>
       )}
 
+      {currentRoute === "auth/callback" && <AuthCallback />}
       {currentRoute === "login" && (
         <Login
           onBackToHome={() => navigateTo("home")}
@@ -196,18 +169,11 @@ export default function App() {
         <Register
           onBackToHome={() => navigateTo("home")}
           navigateTo={navigateTo}
-          onInitiateOtpVerify={handleInitiateOtpVerify}
+          
         />
       )}
 
-      {currentRoute === "verify-otp" && (
-        <VerifyOtp
-          onBackToRegister={() => navigateTo("register")}
-          navigateTo={navigateTo}
-          userPayload={regPayload}
-          onVerifySuccess={handleVerifySuccess}
-        />
-      )}
+      
 
       {currentRoute === "forgot-password" && (
         <ForgotPassword
@@ -234,7 +200,7 @@ export default function App() {
         </>
       )}
 
-      {(currentRoute === "dashboard" || currentRoute === "feed" || currentRoute === "tutor/onboarding" || currentRoute === "guardian/dashboard" || currentRoute === "guardian/post/new" || currentRoute.startsWith("profile")) && currentUser && (
+      {(currentRoute === "dashboard" || currentRoute === "feed" || currentRoute === "tutor/onboarding" || currentRoute === "guardian/dashboard" || currentRoute === "guardian/post/new" || currentRoute.startsWith("profile") || currentRoute === "settings") && currentUser && (
         <>
           <Navbar
             currentRoute={currentRoute}
@@ -265,6 +231,11 @@ export default function App() {
                 profileId={currentRoute.split("/")[1] || currentUser.id}
                 onLogout={handleLogout}
                 onUserUpdate={setCurrentUser}
+              />
+            ) : currentRoute === "settings" ? (
+              <SettingsPage 
+                currentUser={currentUser}
+                onLogout={handleLogout}
               />
             ) : currentRoute === "guardian/post/new" ? (
               <JobPostCreate 
