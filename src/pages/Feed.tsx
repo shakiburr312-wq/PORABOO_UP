@@ -46,7 +46,7 @@ export default function Feed({ currentUser, navigateTo }: FeedProps) {
           .from('posts')
           .select(`
             *,
-            profiles:author_id ( full_name, role )
+            profiles:author_id ( full_name, role, avatar_url )
           `)
           .order('created_at', { ascending: false });
           
@@ -61,6 +61,7 @@ export default function Feed({ currentUser, navigateTo }: FeedProps) {
             author_id: p.author_id,
             author_name: p.profiles?.full_name || "Unknown",
             author_role: p.profiles?.role || "user",
+            author_avatar: p.profiles?.avatar_url,
             content: p.content,
             media_urls: p.media_urls || [],
             created_at: p.created_at,
@@ -329,7 +330,7 @@ export default function Feed({ currentUser, navigateTo }: FeedProps) {
                   <div className={`grid gap-2 mt-2 ${previews.length === 1 ? 'grid-cols-1' : previews.length === 2 ? 'grid-cols-2' : 'grid-cols-2'}`}>
                     {previews.map((src, i) => (
                       <div key={i} className="relative">
-                        <img src={src} className="w-full h-32 object-cover rounded-lg" />
+                        <img src={src} className="w-full aspect-square object-cover rounded-xl" />
                         <button
                           onClick={() => removeImage(i)}
                           className="absolute top-1 right-1 bg-black/50 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-black/70"
@@ -370,7 +371,7 @@ export default function Feed({ currentUser, navigateTo }: FeedProps) {
                     <span className="text-xs text-slate-400 font-mono">{postContent.length}/{MAX_CHARS}</span>
                     <button 
                       onClick={handlePostSubmit}
-                      disabled={isPosting || !postContent.trim() || showWarning}
+                      disabled={isPosting || (!postContent.trim() && images.length === 0) || showWarning}
                       className="bg-yellow hover:bg-yellow-400 text-navy font-bold px-6 py-2 rounded-xl text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bangla-font active:scale-95"
                     >
                       {isPosting ? t("wait") : t("feed_post_btn")}
@@ -437,7 +438,7 @@ export default function Feed({ currentUser, navigateTo }: FeedProps) {
                     <div className={`grid gap-2 mb-4 ${post.media_urls.length === 1 ? 'grid-cols-1' : post.media_urls.length === 2 ? 'grid-cols-2' : post.media_urls.length === 3 ? 'grid-cols-2' : 'grid-cols-2'}`}>
                       {post.media_urls.map((url: string, idx: number) => (
                         <div key={idx} className={`rounded-xl overflow-hidden border border-slate-100 bg-slate-50 ${post.media_urls.length === 3 && idx === 0 ? 'col-span-2' : ''}`}>
-                          <img src={url} alt="post media" className="w-full h-48 object-cover" />
+                          <img src={url} alt="post media" className="w-full aspect-square object-cover" />
                         </div>
                       ))}
                     </div>
@@ -563,7 +564,7 @@ export default function Feed({ currentUser, navigateTo }: FeedProps) {
                   <div key={idx} className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center font-bold text-slate-500 text-xs">
-                        {tutor.name ? tutor.name.charAt(0) : "U"}
+                        <img src={(tutor as any).avatar_url || "https://ui-avatars.com/api/?name=" + encodeURIComponent(tutor.name || "U") + "&background=1a365d&color=fff"} className="w-full h-full object-cover" alt="" />
                       </div>
                       <div>
                         <h4 className="font-bold text-sm text-navy">{tutor.name}</h4>

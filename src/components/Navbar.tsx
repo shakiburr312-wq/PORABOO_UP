@@ -104,14 +104,15 @@ export default function Navbar({ currentRoute, navigateTo, currentUser, onLogout
             {currentUser ? (
               <div className="flex items-center gap-4">
                 <div 
-                  onClick={() => navigateTo(currentUser.role === 'tutor' ? 'tutor/onboarding' : 'guardian/dashboard')}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-navy/5 text-navy border border-navy/10 hover:bg-navy/10 transition-all cursor-pointer"
+                  onClick={() => navigateTo('profile')}
+                  className="flex items-center gap-2 cursor-pointer hover:opacity-80"
                 >
-                  <User className="w-4 h-4 text-navy" />
-                  <span className="text-xs font-semibold">{currentUser.full_name}</span>
-                  <span className="text-[9px] bg-teal text-white px-1.5 py-0.2 rounded-full uppercase">
-                    {currentUser.role === "tutor" ? t("nav_tutor") : t("nav_guardian")}
-                  </span>
+                  <img 
+                    src={(currentUser as any).avatar_url || "https://ui-avatars.com/api/?name=" + encodeURIComponent(currentUser.full_name) + "&background=1a365d&color=fff"} 
+                    className="w-8 h-8 rounded-full object-cover border-2 border-yellow"
+                    alt={currentUser.full_name}
+                  />
+                  <span className="text-sm font-semibold text-navy">{currentUser.full_name}</span>
                 </div>
                 <button
                   onClick={onLogout}
@@ -144,7 +145,12 @@ export default function Navbar({ currentRoute, navigateTo, currentUser, onLogout
           {/* Mobile hamburger button */}
           <div className="md:hidden flex items-center">
             {currentUser && (
-              <div className="mr-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-navy/5 text-navy text-xs border border-navy/10">
+              <div className="mr-3 flex items-center gap-2 cursor-pointer hover:opacity-80" onClick={() => navigateTo('profile')}>
+                <img 
+                  src={(currentUser as any).avatar_url || "https://ui-avatars.com/api/?name=" + encodeURIComponent(currentUser.full_name) + "&background=1a365d&color=fff"} 
+                  className="w-7 h-7 rounded-full object-cover border border-yellow"
+                  alt={currentUser.full_name}
+                />
                 <span className="max-w-[70px] truncate font-medium">{currentUser.full_name}</span>
               </div>
             )}

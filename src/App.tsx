@@ -18,6 +18,7 @@ import GuardianDashboard from "./pages/GuardianDashboard";
 import JobPostCreate from "./pages/JobPostCreate";
 import JobBoard from "./pages/JobBoard";
 import Feed from "./pages/Feed";
+import ProfilePage from "./pages/ProfilePage";
 
 // Supabase helper
 import { Profile, getLocalCurrentUser, setLocalCurrentUser, isSupabaseConfigured } from "./lib/supabase";
@@ -64,12 +65,13 @@ export default function App() {
         const u = getLocalCurrentUser();
         if (u) setCurrentUser(u);
         setCurrentRoute("job-board");
-      } else if (hash === "#/dashboard" || hash === "#/feed" || hash === "#/tutor/onboarding" || hash === "#/guardian/dashboard" || hash === "#/guardian/post/new") {
+      } else if (hash === "#/dashboard" || hash === "#/feed" || hash === "#/tutor/onboarding" || hash === "#/guardian/dashboard" || hash === "#/guardian/post/new" || hash.startsWith("#/profile")) {
         const u = getLocalCurrentUser();
         if (u) {
           setCurrentUser(u);
           if (hash === "#/feed") setCurrentRoute("feed");
           else if (hash === "#/tutor/onboarding") setCurrentRoute("tutor/onboarding");
+          else if (hash.startsWith("#/profile")) setCurrentRoute(hash.replace("#/", ""));
           else if (hash === "#/guardian/dashboard") setCurrentRoute("guardian/dashboard");
           else if (hash === "#/guardian/post/new") setCurrentRoute("guardian/post/new");
           else setCurrentRoute("dashboard");
@@ -232,7 +234,7 @@ export default function App() {
         </>
       )}
 
-      {(currentRoute === "dashboard" || currentRoute === "feed" || currentRoute === "tutor/onboarding" || currentRoute === "guardian/dashboard" || currentRoute === "guardian/post/new") && currentUser && (
+      {(currentRoute === "dashboard" || currentRoute === "feed" || currentRoute === "tutor/onboarding" || currentRoute === "guardian/dashboard" || currentRoute === "guardian/post/new" || currentRoute.startsWith("profile")) && currentUser && (
         <>
           <Navbar
             currentRoute={currentRoute}
@@ -256,6 +258,13 @@ export default function App() {
                 currentUser={currentUser}
                 navigateTo={navigateTo}
                 onLogout={handleLogout}
+              />
+            ) : currentRoute.startsWith("profile") ? (
+              <ProfilePage
+                currentUser={currentUser}
+                profileId={currentRoute.split("/")[1] || currentUser.id}
+                onLogout={handleLogout}
+                onUserUpdate={setCurrentUser}
               />
             ) : currentRoute === "guardian/post/new" ? (
               <JobPostCreate 
