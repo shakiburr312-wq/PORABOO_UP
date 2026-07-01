@@ -1,3 +1,5 @@
+import { useAuth } from "../lib/AuthContext";
+import { useNavigate, useParams } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import { Camera, MapPin, GraduationCap, Briefcase, BookOpen, Layers, Globe, DollarSign, Edit2, Link as LinkIcon, Edit, Users, X, Plus } from "lucide-react";
 import { isSupabaseConfigured, supabase, Profile } from "../lib/supabase";
@@ -6,13 +8,14 @@ import BounceDots from "../components/BounceDots";
 import Navbar from "../components/Navbar";
 
 interface ProfilePageProps {
-  currentUser: Profile;
-  profileId: string;
-  onLogout: () => void;
-  onUserUpdate: (user: Profile) => void;
 }
 
-export default function ProfilePage({ currentUser, profileId, onLogout, onUserUpdate }: ProfilePageProps) {
+export default function ProfilePage() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { currentUser, logout: onLogout, updateProfile } = useAuth();
+  
+  const profileId = id || (currentUser ? currentUser.id : "");
   const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState<any>(null);
@@ -111,7 +114,7 @@ export default function ProfilePage({ currentUser, profileId, onLogout, onUserUp
           await supabase.from('profiles').update({ avatar_url: urlData.publicUrl }).eq('id', profileId);
           setProfileData({ ...profileData, avatar_url: urlData.publicUrl });
           if (isOwnProfile) {
-            onUserUpdate({ ...currentUser, avatar_url: urlData.publicUrl } as Profile);
+            ({ ...currentUser, avatar_url: urlData.publicUrl } as Profile);
             const local = localStorage.getItem("poraboo_current_user");
             if (local) {
               const parsed = JSON.parse(local);
@@ -244,7 +247,6 @@ export default function ProfilePage({ currentUser, profileId, onLogout, onUserUp
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F0F2F5]">
-        <Navbar currentRoute="profile" navigateTo={() => {}} currentUser={currentUser} onLogout={onLogout} />
         <div className="pt-24 flex justify-center items-center h-64">
           <BounceDots />
         </div>
@@ -264,7 +266,6 @@ export default function ProfilePage({ currentUser, profileId, onLogout, onUserUp
 
   return (
     <div className="min-h-screen bg-[#F0F2F5] pb-20 font-sans">
-      <Navbar currentRoute="profile" navigateTo={(r) => { window.location.hash = `#/${r}` }} currentUser={currentUser} onLogout={onLogout} />
       
       {/* Profile Header Area */}
       <div className="bg-white shadow-sm mb-4 pt-14">
@@ -369,8 +370,8 @@ export default function ProfilePage({ currentUser, profileId, onLogout, onUserUp
                   <div className="flex justify-between items-center mt-1">
                     <span className="text-xs text-gray-500">{101 - bioInput.length} character(s) remaining</span>
                     <div className="flex gap-2">
-                      <button onClick={() => setEditingBio(false)} className="px-3 py-1 text-sm text-gray-600 hover:bg-gray-200 rounded-md transition-colors font-semibold">বাতিল</button>
-                      <button onClick={handleSaveBio} className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md transition-colors font-semibold">সংরক্ষণ করুন</button>
+                      <button onClick={() => setEditingBio(false)} className="px-3 py-1 text-sm text-gray-600 hover:bg-gray-200 rounded-md transition-colors font-semibold">{t("profile_cancel")}</button>
+                      <button onClick={handleSaveBio} className="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md transition-colors font-semibold">{t("profile_save")}</button>
                     </div>
                   </div>
                 </div>
@@ -643,7 +644,7 @@ export default function ProfilePage({ currentUser, profileId, onLogout, onUserUp
           <div className="absolute inset-0 bg-white/80 backdrop-blur-sm" onClick={() => setIsEditModalOpen(false)}></div>
           <div className="relative bg-white w-full max-w-[700px] h-full sm:h-auto sm:max-h-[90vh] rounded-lg shadow-xl flex flex-col z-10 border border-gray-200">
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">প্রোফাইল সম্পাদনা করুন</h2>
+              <h2 className="text-xl font-bold text-gray-900">{t("profile_edit")}</h2>
               <button onClick={() => setIsEditModalOpen(false)} className="p-2 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition-colors">
                 <X className="w-5 h-5" />
               </button>
@@ -665,7 +666,7 @@ export default function ProfilePage({ currentUser, profileId, onLogout, onUserUp
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">শিক্ষাগত যোগ্যতা</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">{t("profile_education")}</label>
                     <input 
                       type="text" 
                       value={editForm.education_qualification}
@@ -685,7 +686,7 @@ export default function ProfilePage({ currentUser, profileId, onLogout, onUserUp
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">অভিজ্ঞতা</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t("profile_experience")}</label>
                   <input 
                     type="text" 
                     value={editForm.experience}
@@ -696,7 +697,7 @@ export default function ProfilePage({ currentUser, profileId, onLogout, onUserUp
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">এলাকা (থানা/শহর)</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t("profile_area")}</label>
                   <input 
                     type="text" 
                     value={editForm.present_address}
@@ -706,7 +707,7 @@ export default function ProfilePage({ currentUser, profileId, onLogout, onUserUp
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">বিষয়সমূহ (কমা দিয়ে আলাদা করুন)</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t("profile_subjects")}</label>
                   <input 
                     type="text" 
                     value={editForm.subjects}
@@ -744,7 +745,7 @@ export default function ProfilePage({ currentUser, profileId, onLogout, onUserUp
                 onClick={() => setIsEditModalOpen(false)}
                 className="px-6 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-200 rounded-md transition-colors"
               >
-                বাতিল
+                {t("profile_cancel")}
               </button>
               <button 
                 onClick={handleSaveProfileInfo}

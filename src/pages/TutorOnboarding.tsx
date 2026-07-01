@@ -1,3 +1,5 @@
+import { useAuth } from "../lib/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, ChangeEvent, FormEvent, useMemo } from "react";
 import {  FileText, ChevronRight, Edit3, Image as ImageIcon, MapPin, GraduationCap, DollarSign, Brain, PlusCircle, Check, RefreshCw, X, Search, AlertCircle , CheckCircle2 } from "lucide-react";
 import { Profile, supabase, isSupabaseConfigured } from "../lib/supabase";
@@ -7,11 +9,11 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import ImageUploadLoader from "../components/ImageUploadLoader";
 
 interface TutorOnboardingProps {
-  currentUser: Profile;
-  onComplete: () => void;
 }
 
-export default function TutorOnboarding({ currentUser, onComplete }: TutorOnboardingProps) {
+export default function TutorOnboarding() {
+  const navigate = useNavigate();
+  const { currentUser, logout: onLogout } = useAuth();
   const { t } = useLanguage();
       const [loadingMsg, setLoadingMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -190,7 +192,7 @@ export default function TutorOnboarding({ currentUser, onComplete }: TutorOnboar
       await new Promise(r => setTimeout(r, 1000));
     }
 
-    onComplete();
+    navigate("/profile");
     setLoading(false);
   };
 
@@ -201,7 +203,7 @@ export default function TutorOnboarding({ currentUser, onComplete }: TutorOnboar
       {/* Header & Progress */}
       <div className="mb-10 text-center sm:text-left">
         <h1 className="text-3xl sm:text-4xl font-bold text-navy bangla-font mb-3">{t("tutor_onboarding")}</h1>
-        <p className="text-text-muted bangla-font">আপনার প্রোফাইল তথ্য পূরণ করুন</p>
+        <p className="text-text-muted bangla-font">{t("onboard_subtitle")}</p>
         
         <div className="mt-8 glass-card p-4">
             <div className="flex justify-between text-sm font-bold text-navy mb-2 bangla-font">

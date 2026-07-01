@@ -1,3 +1,5 @@
+import { useAuth } from "../lib/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { useState, FormEvent } from "react";
 import { Profile, supabase, isSupabaseConfigured } from "../lib/supabase";
 import { SUBJECTS_OPTIONS, CLASS_LEVELS, MEDIUM_OPTIONS, DAYS_PER_WEEK, TIME_PREFERENCES, DHAKA_LOCATIONS, GENDER_PREFERENCES } from "../lib/constants";
@@ -5,11 +7,13 @@ import { ArrowLeft, RefreshCw, Search, Check, X, MapPin } from "lucide-react";
 import { useLanguage } from "../hooks/useLanguage";
 
 interface JobPostCreateProps {
-  currentUser: Profile;
-  navigateTo: (route: string) => void;
+  
+  
 }
 
-export default function JobPostCreate({ currentUser, navigateTo }: JobPostCreateProps) {
+export default function JobPostCreate({  }: JobPostCreateProps) {
+  const navigate = useNavigate();
+  const { currentUser, logout: onLogout } = useAuth();
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -84,14 +88,14 @@ export default function JobPostCreate({ currentUser, navigateTo }: JobPostCreate
     }
 
     setLoading(false);
-    navigateTo("job-board");
+    navigate("/job-board");
   };
 
   return (
     <div className="form-page-bg min-h-screen">
       <div className="max-w-3xl mx-auto p-4 sm:p-8 pt-20 pb-24 animate-fadeInUp">
         <button 
-          onClick={() => navigateTo("guardian/dashboard")}
+          onClick={() => navigate("/guardian/dashboard")}
           className="flex items-center gap-2 text-slate-500 hover:text-navy font-medium mb-6 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" /> {t("back_to_dash")}

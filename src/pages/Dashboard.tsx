@@ -1,3 +1,5 @@
+import { useAuth } from "../lib/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect, FormEvent } from "react";
 import { GraduationCap, MapPin, BookOpen, CircleDollarSign, PlusCircle, CheckCircle2, ListFilter, ClipboardList, Send, LogOut, FileCheck2, Users, Search, HelpCircle, ShieldCheck } from "lucide-react";
 import { useLanguage } from "../hooks/useLanguage";
@@ -5,9 +7,9 @@ import { Profile, saveLocalProfile } from "../lib/supabase";
 import { SUBJECTS_OPTIONS, DHAKA_LOCATIONS } from "../lib/constants";
 
 interface DashboardProps {
-  currentUser: Profile;
-  onLogout: () => void;
-  navigateTo: (route: string) => void;
+  
+  
+  
 }
 
 interface TuitionJob {
@@ -21,7 +23,9 @@ interface TuitionJob {
   applied?: boolean;
 }
 
-export default function Dashboard({ currentUser, onLogout, navigateTo }: DashboardProps) {
+export default function Dashboard({   }: DashboardProps) {
+  const navigate = useNavigate();
+  const { currentUser, logout: onLogout } = useAuth();
   const { t } = useLanguage();
   // Tutor profile setup state
   const [university, setUniversity] = useState("");

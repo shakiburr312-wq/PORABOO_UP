@@ -1,3 +1,5 @@
+import { useAuth } from "../lib/AuthContext";
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { Profile, supabase, isSupabaseConfigured } from "../lib/supabase";
 import { 
@@ -17,11 +19,13 @@ import {
 import { useLanguage } from "../hooks/useLanguage";
 
 interface FeedProps {
-  currentUser: Profile;
-  navigateTo: (route: string) => void;
+  
+  
 }
 
-export default function Feed({ currentUser, navigateTo }: FeedProps) {
+export default function Feed({  }: FeedProps) {
+  const navigate = useNavigate();
+  const { currentUser, logout: onLogout } = useAuth();
   const { t } = useLanguage();
   const [postContent, setPostContent] = useState("");
   const [visibility, setVisibility] = useState<"public" | "tutors_only" | "guardians_only">("public");
@@ -289,10 +293,10 @@ export default function Feed({ currentUser, navigateTo }: FeedProps) {
             )}
             
             <div className="mt-8 space-y-2">
-              <button onClick={() => navigateTo('profile')} className="w-full text-left px-4 py-2.5 rounded-xl text-slate-600 font-medium hover:bg-slate-50 hover:text-navy transition-colors flex items-center gap-3">
+              <button onClick={() => navigate("/profile")} className="w-full text-left px-4 py-2.5 rounded-xl text-slate-600 font-medium hover:bg-slate-50 hover:text-navy transition-colors flex items-center gap-3">
                 <User className="w-5 h-5 text-slate-400" /> {t("feed_profile")}
               </button>
-              <button onClick={() => navigateTo('job-board')} className="w-full text-left px-4 py-2.5 rounded-xl text-slate-600 font-medium hover:bg-slate-50 hover:text-navy transition-colors flex items-center gap-3">
+              <button onClick={() => navigate("/job-board")} className="w-full text-left px-4 py-2.5 rounded-xl text-slate-600 font-medium hover:bg-slate-50 hover:text-navy transition-colors flex items-center gap-3">
                 <Briefcase className="w-5 h-5 text-slate-400" /> {t("nav_jobs")}
               </button>
               <button className="w-full text-left px-4 py-2.5 rounded-xl text-slate-600 font-medium hover:bg-slate-50 hover:text-navy transition-colors flex items-center gap-3">
@@ -548,7 +552,7 @@ export default function Feed({ currentUser, navigateTo }: FeedProps) {
               ))}
             </div>
             <button 
-              onClick={() => navigateTo('job-board')}
+              onClick={() => navigate("/job-board")}
               className="w-full mt-4 py-2 text-center text-sm font-bold text-navy hover:bg-slate-50 rounded-lg transition-colors bangla-font"
             > {t("feed_see_more")} </button>
           </div>
@@ -584,11 +588,11 @@ export default function Feed({ currentUser, navigateTo }: FeedProps) {
 
       {/* MOBILE BOTTOM NAV */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-navy text-white flex justify-around items-center py-3 px-4 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-50">
-        <button onClick={() => navigateTo('feed')} className="flex flex-col items-center gap-1 text-yellow transition-transform active:scale-95">
+        <button onClick={() => navigate("/feed")} className="flex flex-col items-center gap-1 text-yellow transition-transform active:scale-95">
           <Home className="w-6 h-6" />
           <span className="text-[10px] font-medium">{t("nav_feed")}</span>
         </button>
-        <button onClick={() => navigateTo('job-board')} className="flex flex-col items-center gap-1 text-white/60 hover:text-white transition-transform active:scale-95">
+        <button onClick={() => navigate("/job-board")} className="flex flex-col items-center gap-1 text-white/60 hover:text-white transition-transform active:scale-95">
           <Briefcase className="w-6 h-6" />
           <span className="text-[10px] font-medium">{t("nav_jobs")}</span>
         </button>
@@ -601,7 +605,7 @@ export default function Feed({ currentUser, navigateTo }: FeedProps) {
           <Bell className="w-6 h-6" />
           <span className="text-[10px] font-medium">{t("nav_notify")}</span>
         </button>
-        <button onClick={() => navigateTo('profile')} className="flex flex-col items-center gap-1 text-white/60 hover:text-white transition-transform active:scale-95">
+        <button onClick={() => navigate("/profile")} className="flex flex-col items-center gap-1 text-white/60 hover:text-white transition-transform active:scale-95">
           <User className="w-6 h-6" />
           <span className="text-[10px] font-medium">{t("nav_profile")}</span>
         </button>

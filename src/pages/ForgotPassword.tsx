@@ -1,14 +1,12 @@
+import { useAuth } from "../lib/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { useState, FormEvent } from "react";
 import { Mail, ArrowLeft, Send, CheckCircle2, ShieldAlert, RefreshCw } from "lucide-react";
 
 import { useLanguage } from "../hooks/useLanguage";
 
-interface ForgotPasswordProps {
-  onBackToLogin: () => void;
-  navigateTo: (route: string) => void;
-}
-
-export default function ForgotPassword({ onBackToLogin, navigateTo }: ForgotPasswordProps) {
+export default function ForgotPassword() {
+  const navigate = useNavigate();
   const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,7 +37,7 @@ export default function ForgotPassword({ onBackToLogin, navigateTo }: ForgotPass
     <div id="forgot-password-container" className="min-h-screen form-page-bg flex flex-col justify-center items-center px-4 pt-20 pb-16 relative select-none">
       {/* Back button */}
       <button
-        onClick={onBackToLogin}
+        onClick={() => navigate("/login")}
         className="absolute top-6 left-6 inline-flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-yellow transition-colors bg-white px-4 py-2 rounded-full shadow-sm border border-navy/5"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -120,7 +118,7 @@ export default function ForgotPassword({ onBackToLogin, navigateTo }: ForgotPass
           <p className="text-xs text-text-muted">
             {t("remembered_pass")}{" "}
             <button
-              onClick={onBackToLogin}
+              onClick={() => navigate("/login")}
               className="font-bold text-blue hover:underline ml-1"
             >
               {t("login_now")}

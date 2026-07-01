@@ -1,23 +1,29 @@
+import { useAuth } from "../lib/AuthContext";
+import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { User, Shield, Bell, Lock, Globe, Camera } from "lucide-react";
 import { Profile } from "../lib/supabase";
 import { useLanguage } from "../hooks/useLanguage";
 
 interface SettingsPageProps {
-  currentUser: Profile;
-  onLogout: () => void;
+  
+  
 }
 
-export default function SettingsPage({ currentUser, onLogout }: SettingsPageProps) {
+export default function SettingsPage({  }: SettingsPageProps) {
+  const navigate = useNavigate();
+  const { currentUser, logout: onLogout } = useAuth();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("account");
   const { language, toggleLanguage } = useLanguage();
+  //
 
   const tabs = [
-    { id: "account", label: "অ্যাকাউন্ট", icon: <User className="w-4 h-4" /> },
-    { id: "security", label: "নিরাপত্তা", icon: <Shield className="w-4 h-4" /> },
-    { id: "notifications", label: "নোটিফিকেশন", icon: <Bell className="w-4 h-4" /> },
-    { id: "privacy", label: "গোপনীয়তা", icon: <Lock className="w-4 h-4" /> },
-    { id: "language", label: "ভাষা", icon: <Globe className="w-4 h-4" /> }
+    { id: "account", label: t("settings_account"), icon: <User className="w-4 h-4" /> },
+    { id: "security", label: t("settings_security"), icon: <Shield className="w-4 h-4" /> },
+    { id: "notifications", label: t("settings_notifications"), icon: <Bell className="w-4 h-4" /> },
+    { id: "privacy", label: t("settings_privacy"), icon: <Lock className="w-4 h-4" /> },
+    { id: "language", label: t("settings_language"), icon: <Globe className="w-4 h-4" /> }
   ];
 
   return (
@@ -26,7 +32,7 @@ export default function SettingsPage({ currentUser, onLogout }: SettingsPageProp
         <div className="w-full md:w-64 shrink-0">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="p-4 border-b border-gray-100">
-              <h2 className="font-bold text-gray-900 text-lg">সেটিংস</h2>
+              <h2 className="font-bold text-gray-900 text-lg">{t("settings_title")}</h2>
             </div>
             <div className="flex flex-row md:flex-col overflow-x-auto no-scrollbar">
               {tabs.map((tab) => (
@@ -51,7 +57,7 @@ export default function SettingsPage({ currentUser, onLogout }: SettingsPageProp
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 min-h-[400px]">
             {activeTab === "account" && (
               <div className="max-w-md">
-                <h3 className="text-xl font-bold text-gray-900 mb-6">অ্যাকাউন্ট সেটিংস</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-6">{t("settings_account")}</h3>
                 
                 <div className="mb-6 flex items-center gap-4">
                   <div className="relative">
@@ -71,15 +77,15 @@ export default function SettingsPage({ currentUser, onLogout }: SettingsPageProp
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">সম্পূর্ণ নাম</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">{t("full_name_label")}</label>
                     <input type="text" defaultValue={currentUser.full_name} className="w-full border border-gray-300 rounded-md p-2 text-[15px] focus:ring-1 focus:ring-[#1B2F6E] focus:outline-none" />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">ইমেইল ঠিকানা</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">{t("email_label")}</label>
                     <input type="email" defaultValue={currentUser.email || "user@example.com"} readOnly className="w-full bg-gray-50 border border-gray-300 rounded-md p-2 text-[15px] text-gray-500 cursor-not-allowed" />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">ফোন নম্বর</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">{t("phone_label")}</label>
                     <input type="text" defaultValue={currentUser.phone} className="w-full border border-gray-300 rounded-md p-2 text-[15px] focus:ring-1 focus:ring-[#1B2F6E] focus:outline-none" />
                   </div>
                   <button className="mt-4 bg-[#F5A623] hover:bg-yellow-500 text-[#1B2F6E] font-bold py-2.5 px-6 rounded-md transition-colors">
@@ -91,18 +97,18 @@ export default function SettingsPage({ currentUser, onLogout }: SettingsPageProp
 
             {activeTab === "security" && (
               <div className="max-w-md">
-                <h3 className="text-xl font-bold text-gray-900 mb-6">নিরাপত্তা ও লগইন</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-6">{t("settings_security")}</h3>
                 <div className="space-y-4 mb-8">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">বর্তমান পাসওয়ার্ড</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">{t("settings_current_pass")}</label>
                     <input type="password" placeholder="••••••••" className="w-full border border-gray-300 rounded-md p-2 text-[15px] focus:ring-1 focus:ring-[#1B2F6E] focus:outline-none" />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">নতুন পাসওয়ার্ড</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">{t("settings_new_pass")}</label>
                     <input type="password" placeholder="••••••••" className="w-full border border-gray-300 rounded-md p-2 text-[15px] focus:ring-1 focus:ring-[#1B2F6E] focus:outline-none" />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">নতুন পাসওয়ার্ড নিশ্চিত করুন</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">{t("settings_confirm_pass")}</label>
                     <input type="password" placeholder="••••••••" className="w-full border border-gray-300 rounded-md p-2 text-[15px] focus:ring-1 focus:ring-[#1B2F6E] focus:outline-none" />
                   </div>
                   <button className="bg-[#1B2F6E] hover:bg-navy-800 text-white font-semibold py-2.5 px-6 rounded-md transition-colors">
@@ -111,7 +117,7 @@ export default function SettingsPage({ currentUser, onLogout }: SettingsPageProp
                 </div>
 
                 <div className="pt-6 border-t border-gray-200">
-                  <h4 className="font-bold text-red-600 mb-2">অ্যাকাউন্ট ডিলিট করুন</h4>
+                  <h4 className="font-bold text-red-600 mb-2">{t("settings_delete_acc")}</h4>
                   <p className="text-sm text-gray-600 mb-3">একবার ডিলিট করলে আর ফিরে পাওয়া যাবে না।</p>
                   <button className="border border-red-200 text-red-600 hover:bg-red-50 font-semibold py-2 px-4 rounded-md transition-colors text-sm">
                     অ্যাকাউন্ট মুছুন
@@ -122,7 +128,7 @@ export default function SettingsPage({ currentUser, onLogout }: SettingsPageProp
 
             {activeTab === "notifications" && (
               <div className="max-w-md">
-                <h3 className="text-xl font-bold text-gray-900 mb-6">নোটিফিকেশন পছন্দ</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-6">{t("settings_notifications")}</h3>
                 <div className="space-y-5">
                   {["নতুন assignment", "Job application", "নতুন connection request", "পোস্টে like/comment", "Admin notification"].map((item, i) => (
                     <div key={i} className="flex items-center justify-between">
@@ -165,7 +171,7 @@ export default function SettingsPage({ currentUser, onLogout }: SettingsPageProp
 
             {activeTab === "language" && (
               <div className="max-w-md">
-                <h3 className="text-xl font-bold text-gray-900 mb-6">ভাষা পছন্দ (Language)</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-6">{t("settings_language")}</h3>
                 <div className="flex gap-4">
                   <button 
                     onClick={() => language !== 'bn' && toggleLanguage()}

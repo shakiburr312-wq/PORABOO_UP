@@ -1,3 +1,5 @@
+import { useAuth } from "../lib/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect, FormEvent } from "react";
 import { GraduationCap, Users, ShieldCheck, Check, ArrowRight, ArrowLeft, Phone, Mail, MapPin, KeyRound, Eye, Lock } from "lucide-react";
 import { Profile, supabase, isSupabaseConfigured } from "../lib/supabase";
@@ -6,12 +8,14 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { useLanguage } from "../hooks/useLanguage";
 
 interface RegisterProps {
-  onBackToHome: () => void;
-  navigateTo: (route: string) => void;
+  
+  
   
 }
 
-export default function Register({ onBackToHome, navigateTo }: RegisterProps) {
+export default function Register({  }: RegisterProps) {
+  const navigate = useNavigate();
+  const { currentUser, logout: onLogout } = useAuth();
   const { t } = useLanguage();
   const [step, setStep] = useState<1 | 2>(1);
   const [role, setRole] = useState<"tutor" | "guardian" | null>(null);
@@ -76,14 +80,13 @@ export default function Register({ onBackToHome, navigateTo }: RegisterProps) {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/#/auth/callback`,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
             full_name: fullName,
             phone: phone,
             role: role,
             present_address: role === "guardian" ? address : undefined,
-            nid_number: role === "guardian" ? nid : undefined,
-          }
+            nid_number: role === "guardian" ? nid : undefined }
         }
       });
 
@@ -95,11 +98,11 @@ export default function Register({ onBackToHome, navigateTo }: RegisterProps) {
       }
       
       // Show success message
-      setSuccessMsg("আপনার ইমেইলে একটি যাচাই লিংক পাঠানো হয়েছে। ইমেইল চেক করুন এবং লিংকে ক্লিক করুন।");
+      setSuccessMsg(t("email_verify_sent"));
       
     } else {
       setLoading(false);
-      setSuccessMsg("আপনার ইমেইলে একটি যাচাই লিংক পাঠানো হয়েছে। ইমেইল চেক করুন এবং লিংকে ক্লিক করুন। (Demo)");
+      setSuccessMsg(t("email_verify_sent"));
     }
   };
 
@@ -110,13 +113,13 @@ export default function Register({ onBackToHome, navigateTo }: RegisterProps) {
           <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <Mail className="w-8 h-8" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">ইমেইল যাচাই করুন</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t("email_verify_check")}</h2>
           <p className="text-gray-600 mb-6">{successMsg}</p>
           <button 
-            onClick={() => navigateTo('login')}
+            onClick={() => navigate("/login")}
             className="w-full bg-[#1B2F6E] text-white font-semibold py-3 rounded-lg hover:bg-navy-800 transition-colors"
           >
-            লগইন পেজে ফিরে যান
+            {t("login_here")}
           </button>
         </div>
       </div>
@@ -126,7 +129,7 @@ export default function Register({ onBackToHome, navigateTo }: RegisterProps) {
   return (
     <div id="register-container" className="min-h-screen form-page-bg flex flex-col justify-center items-center px-4 pt-20 pb-16 relative select-none">
       <button
-        onClick={onBackToHome}
+        onClick={() => navigate("/")}
         className="absolute top-6 left-6 inline-flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-yellow transition-colors bg-white px-4 py-2 rounded-full shadow-sm border border-navy/5 z-20"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -222,7 +225,7 @@ export default function Register({ onBackToHome, navigateTo }: RegisterProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-navy mb-1.5">ফোন নম্বর</label>
+              <label className="block text-sm font-semibold text-navy mb-1.5">{t("phone_label")}</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
                   <Phone className="w-5 h-5" />
@@ -343,7 +346,7 @@ export default function Register({ onBackToHome, navigateTo }: RegisterProps) {
         <div className="mt-8 text-center text-sm text-text-muted">
           {t("already_have_acc")}
           <button
-            onClick={() => navigateTo("login")}
+            onClick={() => navigate("/login")}
             className="ml-1 text-navy font-bold hover:text-yellow transition-colors"
           >
             {t("nav_login")}

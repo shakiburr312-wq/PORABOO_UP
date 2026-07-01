@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import HeroSection from "./components/HeroSection";
-import StatsSection from "./components/StatsSection";
-import HowItWorksSection from "./components/HowItWorksSection";
-import RevenueSection from "./components/RevenueSection";
-import LegalModal from "./components/LegalModal";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './lib/AuthContext';
+import { LanguageProvider, useLanguage } from './hooks/useLanguage';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { PublicOnlyRoute } from './components/PublicOnlyRoute';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import LanguageSwitcher from './components/LanguageSwitcher';
+import LegalModal from './components/LegalModal';
+import React, { useState } from 'react';
 
 // Pages
 import Login from "./pages/Login";
@@ -21,244 +23,140 @@ import Feed from "./pages/Feed";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 
-// Supabase helper
-import { Profile, getLocalCurrentUser, setLocalCurrentUser, isSupabaseConfigured } from "./lib/supabase";
-import { Info, HelpCircle, AlertCircle, X } from "lucide-react";
-import { LanguageProvider, useLanguage } from "./hooks/useLanguage";
-import LanguageSwitcher from "./components/LanguageSwitcher";
-import PageLoader from "./components/PageLoader";
+import HeroSection from "./components/HeroSection";
+import StatsSection from "./components/StatsSection";
+import HowItWorksSection from "./components/HowItWorksSection";
+import RevenueSection from "./components/RevenueSection";
 
-export default function App() {
-  // Routes can be: 'home' | 'login' | 'register' | 'verify-otp' | 'forgot-password' | 'dashboard'
-  const [currentRoute, setCurrentRoute] = useState<string>("home");
-  const [currentUser, setCurrentUser] = useState<Profile | null>(null);
-  
-  // Registration payload passed onto OTP Verify
-  const [regPayload, setRegPayload] = useState<any | null>(null);
-  
-  // Legal terms modals
+import { useNavigate } from 'react-router-dom';
+
+function LandingPage() {
   const [activeLegal, setActiveLegal] = useState<"privacy" | "terms" | "refund" | null>(null);
-  
-  const { t } = useLanguage();
-
-  // Load user session on mount
-  useEffect(() => {
-    const user = getLocalCurrentUser();
-    if (user) {
-      setCurrentUser(user);
-    }
-
-    // Sync state with URL hash
-    const handleHashChange = () => {
-      const hashFull = window.location.hash;
-      const hash = hashFull.split('?')[0];
-      
-      if (hash === "#/login") {
-        setCurrentRoute("login");
-      } else if (hash === "#/register") {
-        setCurrentRoute("register");
-      }  else if (hash === "#/forgot-password") {
-        setCurrentRoute("forgot-password");
-      } else if (hash === "#/job-board") {
-        const u = getLocalCurrentUser();
-        if (u) setCurrentUser(u);
-        setCurrentRoute("job-board");
-      } else if (hash === "#/settings") { const u = getLocalCurrentUser(); if (u) { setCurrentUser(u); setCurrentRoute("settings"); } else { setCurrentRoute("login"); } } else if (hash.startsWith("#/auth/callback")) { setCurrentRoute("auth/callback"); } else if (hash === "#/dashboard" || hash === "#/feed" || hash === "#/tutor/onboarding" || hash === "#/guardian/dashboard" || hash === "#/guardian/post/new" || hash.startsWith("#/profile")) {
-        const u = getLocalCurrentUser();
-        if (u) {
-          setCurrentUser(u);
-          if (hash === "#/feed") setCurrentRoute("feed");
-          else if (hash === "#/tutor/onboarding") setCurrentRoute("tutor/onboarding");
-          else if (hash.startsWith("#/profile")) setCurrentRoute(hash.replace("#/", ""));
-          else if (hash === "#/guardian/dashboard") setCurrentRoute("guardian/dashboard");
-          else if (hash === "#/guardian/post/new") setCurrentRoute("guardian/post/new");
-          else setCurrentRoute("dashboard");
-        } else {
-          setCurrentRoute("login");
-        }
-      } else {
-        setCurrentRoute("home");
-      }
-    };
-
-    window.addEventListener("hashchange", handleHashChange);
-    // Trigger once on load
-    handleHashChange();
-
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
-
-  const navigateTo = (routePath: string) => {
-    const route = routePath.split('?')[0];
-    setCurrentRoute(route);
-    // Update window hash
-    if (routePath === "home") {
-      window.location.hash = "/";
-    } else {
-      window.location.hash = `#/${routePath}`;
-    }
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleLogout = () => {
-    setLocalCurrentUser(null);
-    setCurrentUser(null);
-    navigateTo("home");
-  };
-
-  const handleLoginSuccess = (user: Profile) => {
-    setCurrentUser(user);
-    if (user.role === 'tutor') {
-      navigateTo("tutor/onboarding");
-    } else {
-      navigateTo("guardian/dashboard");
-    }
-  };
-
-  
-  const handleVerifySuccess = (user: Profile) => {
-    setCurrentUser(user);
-    if (user.role === 'tutor') {
-      navigateTo("tutor/onboarding");
-    } else {
-      navigateTo("guardian/dashboard");
-    }
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="relative min-h-screen bg-navy-bg text-navy flex flex-col justify-between selection:bg-yellow/30 selection:text-navy">
-      <PageLoader />
-      <LanguageSwitcher />
-      
-
-      {/* Main Page Rendering Router */}
-      {currentRoute === "home" && (
-        <>
-          <Navbar
-            currentRoute={currentRoute}
-            navigateTo={navigateTo}
-            currentUser={currentUser}
-            onLogout={handleLogout}
-          />
-          
-          <main className="flex-grow pt-16">
-            <HeroSection
-              onJoinAsTutor={() => navigateTo("register?role=tutor")}
-              onSearchTutor={() => navigateTo("register?role=guardian")}
-            />
-            <StatsSection />
-            <HowItWorksSection />
-            <RevenueSection />
-          </main>
-
-          <Footer onShowModal={(type) => setActiveLegal(type)} />
-        </>
-      )}
-
-      {currentRoute === "auth/callback" && <AuthCallback />}
-      {currentRoute === "login" && (
-        <Login
-          onBackToHome={() => navigateTo("home")}
-          navigateTo={navigateTo}
-          onLoginSuccess={handleLoginSuccess}
+      <Navbar />
+      <main className="flex-grow pt-16">
+        <HeroSection
+          onJoinAsTutor={() => navigate('/register?role=tutor')} 
+          onSearchTutor={() => navigate('/register?role=guardian')}
         />
-      )}
-
-      {currentRoute === "register" && (
-        <Register
-          onBackToHome={() => navigateTo("home")}
-          navigateTo={navigateTo}
-          
-        />
-      )}
-
-      
-
-      {currentRoute === "forgot-password" && (
-        <ForgotPassword
-          onBackToLogin={() => navigateTo("login")}
-          navigateTo={navigateTo}
-        />
-      )}
-
-      {currentRoute === "job-board" && (
-        <>
-          <Navbar
-            currentRoute={currentRoute}
-            navigateTo={navigateTo}
-            currentUser={currentUser}
-            onLogout={handleLogout}
-          />
-          <main className="flex-grow pt-16">
-            <JobBoard 
-              currentUser={currentUser} 
-              navigateTo={navigateTo} 
-            />
-          </main>
-          <Footer onShowModal={(type) => setActiveLegal(type)} />
-        </>
-      )}
-
-      {(currentRoute === "dashboard" || currentRoute === "feed" || currentRoute === "tutor/onboarding" || currentRoute === "guardian/dashboard" || currentRoute === "guardian/post/new" || currentRoute.startsWith("profile") || currentRoute === "settings") && currentUser && (
-        <>
-          <Navbar
-            currentRoute={currentRoute}
-            navigateTo={navigateTo}
-            currentUser={currentUser}
-            onLogout={handleLogout}
-          />
-          <main className="flex-grow pt-16">
-            {currentRoute === "tutor/onboarding" ? (
-              <TutorOnboarding 
-                currentUser={currentUser}
-                onComplete={() => navigateTo("job-board")}
-              />
-            ) : currentRoute === "feed" ? (
-              <Feed 
-                currentUser={currentUser}
-                navigateTo={navigateTo}
-              />
-            ) : currentRoute === "guardian/dashboard" ? (
-              <GuardianDashboard 
-                currentUser={currentUser}
-                navigateTo={navigateTo}
-                onLogout={handleLogout}
-              />
-            ) : currentRoute.startsWith("profile") ? (
-              <ProfilePage
-                currentUser={currentUser}
-                profileId={currentRoute.split("/")[1] || currentUser.id}
-                onLogout={handleLogout}
-                onUserUpdate={setCurrentUser}
-              />
-            ) : currentRoute === "settings" ? (
-              <SettingsPage 
-                currentUser={currentUser}
-                onLogout={handleLogout}
-              />
-            ) : currentRoute === "guardian/post/new" ? (
-              <JobPostCreate 
-                currentUser={currentUser}
-                navigateTo={navigateTo}
-              />
-            ) : (
-              <Dashboard
-                currentUser={currentUser}
-                onLogout={handleLogout}
-                navigateTo={navigateTo}
-              />
-            )}
-          </main>
-          <Footer onShowModal={(type) => setActiveLegal(type)} />
-        </>
-      )}
-
-      {/* Legal Terms Modal Pop-up */}
+        <StatsSection />
+        <HowItWorksSection />
+        <RevenueSection />
+      </main>
+      <Footer onShowModal={(type) => setActiveLegal(type)} />
       <LegalModal
         type={activeLegal}
         onClose={() => setActiveLegal(null)}
       />
     </div>
+  );
+}
+
+function MainLayout({ children }: { children: React.ReactNode }) {
+  const [activeLegal, setActiveLegal] = useState<"privacy" | "terms" | "refund" | null>(null);
+  
+  return (
+    <div className="relative min-h-screen bg-[#F0F2F5] text-navy flex flex-col justify-between selection:bg-yellow/30 selection:text-navy">
+      <Navbar />
+      <main className="flex-grow pt-16">
+        {children}
+      </main>
+      <Footer onShowModal={(type) => setActiveLegal(type)} />
+      <LegalModal
+        type={activeLegal}
+        onClose={() => setActiveLegal(null)}
+      />
+    </div>
+  );
+}
+
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <LanguageProvider>
+        <LanguageSwitcher />
+        <BrowserRouter>
+          <Routes>
+            {/* Public only — redirect if logged in */}
+            <Route path="/" element={
+              <PublicOnlyRoute>
+                <LandingPage />
+              </PublicOnlyRoute>
+            } />
+            <Route path="/login" element={
+              <PublicOnlyRoute>
+                <Login />
+              </PublicOnlyRoute>
+            } />
+            <Route path="/register" element={
+              <PublicOnlyRoute>
+                <Register />
+              </PublicOnlyRoute>
+            } />
+
+            {/* Auth callback — always accessible */}
+            <Route path="/auth/callback" 
+              element={<AuthCallback />} 
+            />
+
+            {/* Protected — redirect to login if not logged in */}
+            <Route path="/feed" element={
+              <ProtectedRoute>
+                <MainLayout><Feed /></MainLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <MainLayout><ProfilePage /></MainLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/profile/:id" element={
+              <ProtectedRoute>
+                <MainLayout><ProfilePage /></MainLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/job-board" element={
+              <ProtectedRoute>
+                <MainLayout><JobBoard /></MainLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/tutor/onboarding" element={
+              <ProtectedRoute>
+                <MainLayout><TutorOnboarding /></MainLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <MainLayout><SettingsPage /></MainLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/guardian/dashboard" element={
+              <ProtectedRoute>
+                <MainLayout><GuardianDashboard /></MainLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/guardian/post/new" element={
+              <ProtectedRoute>
+                <MainLayout><JobPostCreate /></MainLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <MainLayout><Dashboard /></MainLayout>
+              </ProtectedRoute>
+            } />
+
+            {/* Fallback */}
+            <Route path="*" 
+              element={<Navigate to="/" replace />} 
+            />
+          </Routes>
+        </BrowserRouter>
+      </LanguageProvider>
+    </AuthProvider>
   );
 }

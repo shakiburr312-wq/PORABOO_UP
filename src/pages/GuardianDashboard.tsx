@@ -1,15 +1,19 @@
+import { useAuth } from "../lib/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Profile } from "../lib/supabase";
 import { Home, ClipboardList, Bell, Settings, LogOut, PlusCircle, Users } from "lucide-react";
 import { useLanguage } from "../hooks/useLanguage";
 
 interface GuardianDashboardProps {
-  currentUser: Profile;
-  navigateTo: (route: string) => void;
-  onLogout: () => void;
+  
+  
+  
 }
 
-export default function GuardianDashboard({ currentUser, navigateTo, onLogout }: GuardianDashboardProps) {
+export default function GuardianDashboard({   }: GuardianDashboardProps) {
+  const navigate = useNavigate();
+  const { currentUser, logout: onLogout } = useAuth();
   const [activeTab, setActiveTab] = useState<"home" | "posts" | "notifications" | "settings">("home");
   const { t, language } = useLanguage();
 
@@ -85,7 +89,7 @@ export default function GuardianDashboard({ currentUser, navigateTo, onLogout }:
                 <p className="text-white/80 bangla-font text-sm sm:text-base">{t("find_tutor")}</p>
               </div>
               <button 
-                onClick={() => navigateTo("guardian/post/new")}
+                onClick={() => navigate("/guardian/post/new")}
                 className="relative z-10 bg-yellow text-navy hover:bg-yellow/90 font-bold py-3 px-6 rounded-full flex items-center gap-2 transition-transform hover:scale-105 active:scale-95 whitespace-nowrap"
               >
                 <PlusCircle className="w-5 h-5" />
@@ -141,7 +145,7 @@ export default function GuardianDashboard({ currentUser, navigateTo, onLogout }:
               <ClipboardList className="w-16 h-16 mb-4 text-slate-200" />
               <p className="bangla-font text-slate-500 mb-6">{t("no_posts")}</p>
               <button 
-                onClick={() => navigateTo("guardian/post/new")}
+                onClick={() => navigate("/guardian/post/new")}
                 className="bg-navy text-white hover:bg-navy/90 font-bold py-3 px-6 rounded-full flex items-center gap-2 transition-colors"
               >
                 <PlusCircle className="w-5 h-5" /> {t("create_first_post")}

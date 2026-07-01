@@ -1,3 +1,5 @@
+import { useAuth } from "../lib/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { useState, FormEvent } from "react";
 import { Mail, Lock, ArrowLeft } from "lucide-react";
 import { Profile, isSupabaseConfigured, setLocalCurrentUser, supabase } from "../lib/supabase";
@@ -5,12 +7,14 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { useLanguage } from "../hooks/useLanguage";
 
 interface LoginProps {
-  onBackToHome: () => void;
-  navigateTo: (route: string) => void;
+  
+  
   onLoginSuccess: (user: Profile) => void;
 }
 
-export default function Login({ onBackToHome, navigateTo, onLoginSuccess }: LoginProps) {
+export default function Login() {
+  const navigate = useNavigate();
+  const { currentUser, logout: onLogout } = useAuth();
   const { t } = useLanguage();
   
   // Fields
@@ -46,11 +50,11 @@ export default function Login({ onBackToHome, navigateTo, onLoginSuccess }: Logi
 
         if (authError) {
           if (authError.message.includes("Invalid")) {
-            setErrorMsg("ইমেইল বা পাসওয়ার্ড সঠিক নয়");
+            setErrorMsg(t("login_error_invalid"));
           } else if (authError.message.includes("Email not confirmed")) {
-            setErrorMsg("আপনার ইমেইল যাচাই করুন। ইনবক্স চেক করুন।");
+            setErrorMsg(t("login_error_unverified"));
           } else {
-            setErrorMsg("লগইন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।");
+            setErrorMsg(t("login_error_general"));
           }
           setLoading(false);
           return;
@@ -71,7 +75,11 @@ export default function Login({ onBackToHome, navigateTo, onLoginSuccess }: Logi
 
           setLocalCurrentUser(profileData);
           setLoading(false);
-          onLoginSuccess(profileData);
+          if (profileData.role === 'tutor') {
+            navigate('/tutor/onboarding');
+          } else {
+            navigate('/feed');
+          }
           return;
         }
       } else {
@@ -88,7 +96,7 @@ export default function Login({ onBackToHome, navigateTo, onLoginSuccess }: Logi
           };
           setLocalCurrentUser(simulatedUser);
           setLoading(false);
-          onLoginSuccess(simulatedUser);
+          navigate('/tutor/onboarding');
         }, 1000);
       }
     } catch (err: any) {
@@ -101,7 +109,7 @@ export default function Login({ onBackToHome, navigateTo, onLoginSuccess }: Logi
     <div id="login-container" className="min-h-screen form-page-bg flex flex-col justify-center items-center px-4 pt-20 pb-16 relative">
       {/* Floating Back to Home Link */}
       <button
-        onClick={onBackToHome}
+        onClick={() => navigate("/")}
         className="absolute top-6 left-6 inline-flex items-center gap-1.5 text-sm font-semibold text-navy hover:text-yellow transition-colors bg-white px-4 py-2 rounded-full shadow-sm border border-navy/5"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -112,11 +120,9 @@ export default function Login({ onBackToHome, navigateTo, onLoginSuccess }: Logi
       <div id="login-card" className="w-full max-w-md glass-card p-8 sm:p-10 relative z-10 animate-fadeInUp">
         {/* Header Logo */}
         <div className="text-center mb-8">
-          <span className="logo-font text-3xl tracking-wider text-navy block mb-1">
-            PORABOO
-          </span>
+          <h1 className="text-3xl font-bold text-navy block mb-1">{t("login_title")}</h1>
           <span className="text-xs font-semibold text-text-muted bg-navy/5 px-2.5 py-1 rounded-full uppercase">
-            {t("login_portal")}
+            {t("login_subtitle")}
           </span>
         </div>
 
@@ -128,7 +134,7 @@ export default function Login({ onBackToHome, navigateTo, onLoginSuccess }: Logi
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-navy mb-1.5">{t("email")}</label>
+            <label className="block text-sm font-semibold text-navy mb-1.5">{t("email_label")}</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
                 <Mail className="w-5 h-5" />
@@ -138,13 +144,13 @@ export default function Login({ onBackToHome, navigateTo, onLoginSuccess }: Logi
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-navy focus:border-navy outline-none transition-all text-sm font-medium placeholder:font-normal"
-                placeholder="your@email.com"
+                placeholder={t("email_placeholder")}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-navy mb-1.5">{t("password")}</label>
+            <label className="block text-sm font-semibold text-navy mb-1.5">{t("password_label")}</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
                 <Lock className="w-5 h-5" />
@@ -154,7 +160,7 @@ export default function Login({ onBackToHome, navigateTo, onLoginSuccess }: Logi
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-navy focus:border-navy outline-none transition-all text-sm font-medium placeholder:font-normal"
-                placeholder="••••••••"
+                placeholder={t("password_placeholder")}
               />
             </div>
           </div>
@@ -162,7 +168,7 @@ export default function Login({ onBackToHome, navigateTo, onLoginSuccess }: Logi
           <div className="flex justify-end pt-1">
             <button
               type="button"
-              onClick={() => navigateTo("forgot-password")}
+              onClick={() => navigate("/forgot-password")}
               className="text-sm font-medium text-text-muted hover:text-navy transition-colors"
             >
               {t("forgot_pass")}
@@ -174,14 +180,14 @@ export default function Login({ onBackToHome, navigateTo, onLoginSuccess }: Logi
             disabled={loading}
             className="w-full bg-yellow hover:bg-yellow-400 text-navy font-bold py-3.5 px-4 rounded-xl transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 mt-4 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {loading ? <LoadingSpinner size="sm" color="navy" /> : t("nav_login")}
+            {loading ? <LoadingSpinner size="sm" color="navy" /> : t("login_btn")}
           </button>
         </form>
 
         <div className="mt-8 text-center text-sm text-text-muted">
           {t("dont_have_acc")}
           <button
-            onClick={() => navigateTo("register")}
+            onClick={() => navigate("/register")}
             className="ml-1 text-navy font-bold hover:text-yellow transition-colors"
           >
             {t("create_account")}

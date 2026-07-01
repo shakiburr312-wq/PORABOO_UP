@@ -1,3 +1,5 @@
+import { useAuth } from "../lib/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Profile, supabase, isSupabaseConfigured } from "../lib/supabase";
 import { Search, MapPin, Clock, Calendar, GraduationCap, DollarSign, Filter, ChevronDown, UserRound } from "lucide-react";
@@ -7,11 +9,13 @@ import SkeletonCard from "../components/SkeletonCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 interface JobBoardProps {
-  currentUser: Profile | null;
-  navigateTo: (route: string) => void;
+  
+  
 }
 
-export default function JobBoard({ currentUser, navigateTo }: JobBoardProps) {
+export default function JobBoard({  }: JobBoardProps) {
+  const navigate = useNavigate();
+  const { currentUser, logout: onLogout } = useAuth();
   const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [jobs, setJobs] = useState<any[]>([]);
@@ -138,7 +142,7 @@ export default function JobBoard({ currentUser, navigateTo }: JobBoardProps) {
         <h1 className="text-xl md:text-2xl font-bold text-[#1B2F6E]">জব বোর্ড</h1>
         {currentUser?.role === 'guardian' ? (
           <button 
-            onClick={() => navigateTo('guardian/post/new')}
+            onClick={() => navigate('/guardian/post/new')}
             className="bg-[#F5A623] hover:bg-yellow-500 text-[#1B2F6E] font-bold py-2 px-4 rounded-md shadow-sm transition-colors text-sm md:text-base flex items-center gap-1"
           >
             নতুন পোস্ট করুন +
@@ -250,11 +254,11 @@ export default function JobBoard({ currentUser, navigateTo }: JobBoardProps) {
                       </button>
                     )
                   ) : currentUser?.id === job.guardian_id ? (
-                    <button onClick={() => navigateTo('guardian/dashboard')} className="border border-[#1B2F6E] text-[#1B2F6E] font-semibold py-1.5 px-4 rounded-md text-sm hover:bg-navy/5 transition-colors">
+                    <button onClick={() => navigate('/guardian/dashboard')} className="border border-[#1B2F6E] text-[#1B2F6E] font-semibold py-1.5 px-4 rounded-md text-sm hover:bg-navy/5 transition-colors">
                       আবেদনকারী দেখুন
                     </button>
                   ) : !currentUser ? (
-                     <button onClick={() => navigateTo("login")} className="bg-gray-100 text-gray-700 font-semibold py-1.5 px-4 rounded-md text-sm hover:bg-gray-200 transition-colors">
+                     <button onClick={() => navigate("/login")} className="bg-gray-100 text-gray-700 font-semibold py-1.5 px-4 rounded-md text-sm hover:bg-gray-200 transition-colors">
                       লগইন করুন
                      </button>
                   ) : (
