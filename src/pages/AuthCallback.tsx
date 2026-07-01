@@ -2,9 +2,11 @@ import { useEffect } from "react";
 import { supabase, setLocalCurrentUser } from "../lib/supabase";
 import PageLoader from "../components/PageLoader";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../hooks/useLanguage";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleAuth = async () => {
@@ -47,7 +49,7 @@ export default function AuthCallback() {
   return (
     <div className="min-h-screen bg-[#F0F2F5] flex flex-col items-center justify-center">
       <PageLoader />
-      <p className="mt-4 text-[#1B2F6E] font-semibold animate-pulse">লগইন করা হচ্ছে...</p>
+      <p className="mt-4 text-[#1B2F6E] font-semibold animate-pulse">{t("verifying")}</p>
     </div>
   );
 }

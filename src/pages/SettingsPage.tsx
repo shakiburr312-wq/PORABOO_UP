@@ -1,7 +1,7 @@
 import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
-import { User, Shield, Bell, Lock, Globe, Camera } from "lucide-react";
+import { User, Shield, Bell, Lock, Globe, Camera, Eye, EyeOff } from "lucide-react";
 import { Profile } from "../lib/supabase";
 import { useLanguage } from "../hooks/useLanguage";
 
@@ -16,7 +16,10 @@ export default function SettingsPage({  }: SettingsPageProps) {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("account");
   const { language, toggleLanguage } = useLanguage();
-  //
+  
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const tabs = [
     { id: "account", label: t("settings_account"), icon: <User className="w-4 h-4" /> },
@@ -101,15 +104,51 @@ export default function SettingsPage({  }: SettingsPageProps) {
                 <div className="space-y-4 mb-8">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">{t("settings_current_pass")}</label>
-                    <input type="password" placeholder="••••••••" className="w-full border border-gray-300 rounded-md p-2 text-[15px] focus:ring-1 focus:ring-[#1B2F6E] focus:outline-none" />
+                    <div className="relative">
+                      <input type={showCurrentPassword ? "text" : "password"} placeholder="••••••••" className="w-full border border-gray-300 rounded-md p-2 pr-10 text-[15px] focus:ring-1 focus:ring-[#1B2F6E] focus:outline-none" />
+                      <button
+                        type="button"
+                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-navy transition-all duration-200 focus:outline-none"
+                      >
+                        <div className="relative w-4 h-4">
+                          <Eye size={16} className={`absolute inset-0 transition-all duration-300 ${showCurrentPassword ? 'opacity-0 scale-75 rotate-12' : 'opacity-100 scale-100 rotate-0'}`} />
+                          <EyeOff size={16} className={`absolute inset-0 transition-all duration-300 ${showCurrentPassword ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-75 -rotate-12'}`} />
+                        </div>
+                      </button>
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">{t("settings_new_pass")}</label>
-                    <input type="password" placeholder="••••••••" className="w-full border border-gray-300 rounded-md p-2 text-[15px] focus:ring-1 focus:ring-[#1B2F6E] focus:outline-none" />
+                    <div className="relative">
+                      <input type={showNewPassword ? "text" : "password"} placeholder="••••••••" className="w-full border border-gray-300 rounded-md p-2 pr-10 text-[15px] focus:ring-1 focus:ring-[#1B2F6E] focus:outline-none" />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-navy transition-all duration-200 focus:outline-none"
+                      >
+                        <div className="relative w-4 h-4">
+                          <Eye size={16} className={`absolute inset-0 transition-all duration-300 ${showNewPassword ? 'opacity-0 scale-75 rotate-12' : 'opacity-100 scale-100 rotate-0'}`} />
+                          <EyeOff size={16} className={`absolute inset-0 transition-all duration-300 ${showNewPassword ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-75 -rotate-12'}`} />
+                        </div>
+                      </button>
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">{t("settings_confirm_pass")}</label>
-                    <input type="password" placeholder="••••••••" className="w-full border border-gray-300 rounded-md p-2 text-[15px] focus:ring-1 focus:ring-[#1B2F6E] focus:outline-none" />
+                    <div className="relative">
+                      <input type={showConfirmPassword ? "text" : "password"} placeholder="••••••••" className="w-full border border-gray-300 rounded-md p-2 pr-10 text-[15px] focus:ring-1 focus:ring-[#1B2F6E] focus:outline-none" />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-navy transition-all duration-200 focus:outline-none"
+                      >
+                        <div className="relative w-4 h-4">
+                          <Eye size={16} className={`absolute inset-0 transition-all duration-300 ${showConfirmPassword ? 'opacity-0 scale-75 rotate-12' : 'opacity-100 scale-100 rotate-0'}`} />
+                          <EyeOff size={16} className={`absolute inset-0 transition-all duration-300 ${showConfirmPassword ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-75 -rotate-12'}`} />
+                        </div>
+                      </button>
+                    </div>
                   </div>
                   <button className="bg-[#1B2F6E] hover:bg-navy-800 text-white font-semibold py-2.5 px-6 rounded-md transition-colors">
                     পাসওয়ার্ড পরিবর্তন করুন

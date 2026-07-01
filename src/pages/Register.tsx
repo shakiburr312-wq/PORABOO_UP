@@ -1,7 +1,7 @@
 import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, FormEvent } from "react";
-import { GraduationCap, Users, ShieldCheck, Check, ArrowRight, ArrowLeft, Phone, Mail, MapPin, KeyRound, Eye, Lock } from "lucide-react";
+import { GraduationCap, Users, ShieldCheck, Check, ArrowRight, ArrowLeft, Phone, Mail, MapPin, KeyRound, Eye, EyeOff, Lock } from "lucide-react";
 import { Profile, supabase, isSupabaseConfigured } from "../lib/supabase";
 
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -17,7 +17,7 @@ export default function Register({  }: RegisterProps) {
   const navigate = useNavigate();
   const { currentUser, logout: onLogout } = useAuth();
   const { t } = useLanguage();
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | "email-sent">(1);
   const [role, setRole] = useState<"tutor" | "guardian" | null>(null);
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -42,6 +42,8 @@ export default function Register({  }: RegisterProps) {
   const [nid, setNid] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -76,33 +78,52 @@ export default function Register({  }: RegisterProps) {
     setLoading(true);
 
     if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: {
-            full_name: fullName,
-            phone: phone,
-            role: role,
-            present_address: role === "guardian" ? address : undefined,
-            nid_number: role === "guardian" ? nid : undefined }
-        }
-      });
+      try {
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            data: {
+              full_name: fullName,
+              phone: phone,
+              role: role,
+              present_address: role === "guardian" ? address : undefined,
+              nid_number: role === "guardian" ? nid : undefined 
+            }
+          }
+        });
 
-      setLoading(false);
-      
-      if (error) {
-        setErrorMsg(error.message);
-        return;
+        if (signUpError) {
+          if (signUpError.message.includes('already registered')) {
+            setErrorMsg(t('email_already_exists'));
+          } else {
+            setErrorMsg(signUpError.message);
+          }
+          setLoading(false);
+          return;
+        }
+
+        if (data.user) {
+          await supabase.from('profiles').upsert({
+            id: data.user.id,
+            full_name: fullName,
+            role: role,
+            phone: phone,
+            email: email,
+            created_at: new Date().toISOString()
+          });
+        }
+
+        setStep("email-sent");
+      } catch (err: any) {
+        setErrorMsg(err.message || t("error"));
+      } finally {
+        setLoading(false);
       }
-      
-      // Show success message
-      setSuccessMsg(t("email_verify_sent"));
-      
     } else {
       setLoading(false);
-      setSuccessMsg(t("email_verify_sent"));
+      setStep("email-sent");
     }
   };
 
@@ -206,7 +227,7 @@ export default function Register({  }: RegisterProps) {
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
-        ) : (
+        ) : step === 2 ? (
           <form onSubmit={handleSubmitRegistration} className="space-y-4">
             <div>
               <label className="block text-sm font-semibold text-navy mb-1.5">{t("full_name")}</label>
@@ -299,12 +320,28 @@ export default function Register({  }: RegisterProps) {
                   <Lock className="w-5 h-5" />
                 </div>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-navy focus:border-navy outline-none transition-all text-sm font-medium placeholder:font-normal"
+                  className="w-full pl-10 pr-12 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-navy focus:border-navy outline-none transition-all text-sm font-medium placeholder:font-normal"
                   placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-navy transition-all duration-200 focus:outline-none"
+                >
+                  <div className="relative w-5 h-5">
+                    <Eye 
+                      size={20} 
+                      className={`absolute inset-0 transition-all duration-300 ${showPassword ? 'opacity-0 scale-75 rotate-12' : 'opacity-100 scale-100 rotate-0'}`}
+                    />
+                    <EyeOff 
+                      size={20}
+                      className={`absolute inset-0 transition-all duration-300 ${showPassword ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-75 -rotate-12'}`}
+                    />
+                  </div>
+                </button>
               </div>
             </div>
             
@@ -315,12 +352,28 @@ export default function Register({  }: RegisterProps) {
                   <KeyRound className="w-5 h-5" />
                 </div>
                 <input
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-navy focus:border-navy outline-none transition-all text-sm font-medium placeholder:font-normal"
+                  className="w-full pl-10 pr-12 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-navy focus:border-navy outline-none transition-all text-sm font-medium placeholder:font-normal"
                   placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-navy transition-all duration-200 focus:outline-none"
+                >
+                  <div className="relative w-5 h-5">
+                    <Eye 
+                      size={20} 
+                      className={`absolute inset-0 transition-all duration-300 ${showConfirmPassword ? 'opacity-0 scale-75 rotate-12' : 'opacity-100 scale-100 rotate-0'}`}
+                    />
+                    <EyeOff 
+                      size={20}
+                      className={`absolute inset-0 transition-all duration-300 ${showConfirmPassword ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-75 -rotate-12'}`}
+                    />
+                  </div>
+                </button>
               </div>
             </div>
 
@@ -341,6 +394,49 @@ export default function Register({  }: RegisterProps) {
               </button>
             </div>
           </form>
+        ) : (
+          <div className="text-center py-8 px-4">
+            <div className="w-20 h-20 bg-teal-100/50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Mail size={40} className="text-teal-600" />
+            </div>
+            <h2 className="font-lexend font-semibold text-2xl text-navy mb-2">
+              {t('email_verify_sent')}
+            </h2>
+            <p className="font-bangla text-gray-600 mb-6">
+              <span className="font-semibold text-navy">
+                {email}
+              </span>
+              {' '}-এ একটি যাচাই লিংক পাঠানো হয়েছে।
+              ইমেইল চেক করুন এবং লিংকে ক্লিক করুন।
+            </p>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-sm text-navy font-bangla mb-6">
+              ⚠️ Spam/Junk folder চেক করুন যদি 
+              ইমেইল না আসে।
+            </div>
+            <button
+              onClick={() => navigate('/login')}
+              className="w-full bg-navy hover:bg-navy-800 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-sm flex items-center justify-center"
+            >
+              লগইন পেজে যান
+            </button>
+            <button
+              onClick={async () => {
+                if (isSupabaseConfigured && supabase) {
+                  await supabase.auth.resend({
+                    type: 'signup',
+                    email: email,
+                    options: {
+                      emailRedirectTo: `${window.location.origin}/auth/callback`
+                    }
+                  });
+                  alert('ইমেইল পুনরায় পাঠানো হয়েছে');
+                }
+              }}
+              className="mt-4 text-sm text-gray-500 hover:text-navy transition-colors"
+            >
+              ইমেইল পাননি? আবার পাঠান
+            </button>
+          </div>
         )}
 
         <div className="mt-8 text-center text-sm text-text-muted">

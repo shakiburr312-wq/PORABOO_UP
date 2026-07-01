@@ -1,7 +1,7 @@
 import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, FormEvent } from "react";
-import { Mail, Lock, ArrowLeft } from "lucide-react";
+import { Mail, Lock, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { Profile, isSupabaseConfigured, setLocalCurrentUser, supabase } from "../lib/supabase";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useLanguage } from "../hooks/useLanguage";
@@ -20,6 +20,7 @@ export default function Login() {
   // Fields
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   
   // State indicators
   const [loading, setLoading] = useState(false);
@@ -156,12 +157,28 @@ export default function Login() {
                 <Lock className="w-5 h-5" />
               </div>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-navy focus:border-navy outline-none transition-all text-sm font-medium placeholder:font-normal"
+                className="w-full pl-10 pr-12 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-navy focus:border-navy outline-none transition-all text-sm font-medium placeholder:font-normal"
                 placeholder={t("password_placeholder")}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-navy transition-all duration-200 focus:outline-none"
+              >
+                <div className="relative w-5 h-5">
+                  <Eye 
+                    size={20} 
+                    className={`absolute inset-0 transition-all duration-300 ${showPassword ? 'opacity-0 scale-75 rotate-12' : 'opacity-100 scale-100 rotate-0'}`}
+                  />
+                  <EyeOff 
+                    size={20}
+                    className={`absolute inset-0 transition-all duration-300 ${showPassword ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-75 -rotate-12'}`}
+                  />
+                </div>
+              </button>
             </div>
           </div>
 

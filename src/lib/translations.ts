@@ -1,5 +1,8 @@
 export const translations: Record<string, Record<string, string>> = {
   en: {
+    "email_already_exists": "An account with this email already exists",
+    "email_verify_sent": "Verification email sent!",
+    "verifying": "Verifying...",
     "tutor_desc": "Want to teach students? Join our verified tutor job board.",
     "guardian_desc": "Looking for the right teacher for your child? Post a request.",
     "continue": "Continue",
@@ -550,6 +553,9 @@ export const translations: Record<string, Record<string, string>> = {
     "loading_more": "Loading more posts..."
   },
   bn: {
+    "email_already_exists": "এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে",
+    "email_verify_sent": "যাচাই ইমেইল পাঠানো হয়েছে!",
+    "verifying": "যাচাই করা হচ্ছে...",
     "tutor_desc": "ছাত্র পড়াতে চান? আমাদের ভেরিফাইড টিউটর জব বোর্ডে যোগ দিন।",
     "guardian_desc": "আপনার সন্তানের জন্য সঠিক শিক্ষক খুঁজছেন? এখনই রিকুয়েস্ট পোস্ট করুন।",
     "continue": "চালিয়ে যান",
