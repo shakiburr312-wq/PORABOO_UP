@@ -70,8 +70,8 @@ export default function SettingsPage({  }: SettingsPageProps) {
                     </button>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900">প্রোফাইল ছবি</p>
-                    <p className="text-sm text-gray-500">JPG, GIF বা PNG। সর্বোচ্চ 5MB</p>
+                    <p className="font-semibold text-gray-900">{t("profile_picture")}</p>
+                    <p className="text-sm text-gray-500">{t("image_upload_hint")}</p>
                   </div>
                 </div>
 

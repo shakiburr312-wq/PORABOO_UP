@@ -2,8 +2,6 @@
  
 *
 ,
-.
-?
 about_you
 active_posts
 additional_notes
@@ -72,7 +70,6 @@ faq_2_a
 faq_2_q
 faq_3_a
 faq_3_q
-feed_add_image
 feed_comment
 feed_connect
 feed_like
@@ -129,7 +126,6 @@ hsc_gpa_ph
 i_am_guardian
 i_am_tutor
 inst_name
-job_id
 join_as_tutor
 live_job_board
 live_job_desc
@@ -225,7 +221,6 @@ rev_see_faq
 rev_take
 rev_title
 rev_tutor_change
-role
 same_as_permanent
 save
 saving_profile
@@ -284,8 +279,4 @@ upload_image
 wait
 welcome
 yt_drive_link
-পোস্ট ব্যর্থ হয়েছে
-পোস্ট সফল হয়েছে ✓
-প্রোফাইল সংরক্ষিত হয়েছে ✓
-লিংক কপি হয়েছে ✓
 সর্বোচ্চ ৪টি ছবি দেওয়া যাবে

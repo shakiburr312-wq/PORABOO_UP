@@ -118,7 +118,7 @@ export default function Feed({  }: FeedProps) {
   const handlePostSubmit = async () => {
     if (!postContent.trim() && images.length === 0) return;
     if (showWarning) {
-      alert("Please remove contact information before posting.");
+      alert(t("no_contact_info_alert"));
       return;
     }
     
@@ -211,7 +211,7 @@ export default function Feed({  }: FeedProps) {
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []) as File[];
     if (files.length + images.length > 4) {
-      alert("সর্বোচ্চ ৪টি ছবি দেওয়া যাবে");
+      alert(t("max_4_images"));
       return;
     }
     

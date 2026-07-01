@@ -41,7 +41,12 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   };
 
   const t = (key: string): string => {
-    return translations[language]?.[key] || translations["en"]?.[key] || key;
+    const value = translations[language]?.[key] || translations["en"]?.[key];
+    if (!value) {
+      console.warn(`Missing translation key: ${key}`);
+      return key.replace(/_/g, ' ');
+    }
+    return value;
   };
 
   return (

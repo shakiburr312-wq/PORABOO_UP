@@ -654,7 +654,7 @@ export default function ProfilePage() {
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">বায়ো (সর্বোচ্চ ১০১ অক্ষর)</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">{t("bio_max_chars")}</label>
                   <textarea 
                     value={editForm.bio}
                     onChange={(e) => setEditForm({...editForm, bio: e.target.value.slice(0, 101)})}
