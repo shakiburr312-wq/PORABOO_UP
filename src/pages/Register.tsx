@@ -17,7 +17,7 @@ export default function Register({  }: RegisterProps) {
   const navigate = useNavigate();
   const { currentUser, logout: onLogout } = useAuth();
   const { t } = useLanguage();
-  const [step, setStep] = useState<1 | 2 | "email-sent">(1);
+  const [step, setStep] = useState<1 | 2>(1);
   const [role, setRole] = useState<"tutor" | "guardian" | null>(null);
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -113,9 +113,13 @@ export default function Register({  }: RegisterProps) {
             email: email,
             created_at: new Date().toISOString()
           });
-        }
 
-        setStep("email-sent");
+          if (role === 'tutor') {
+            navigate('/tutor/onboarding');
+          } else {
+            navigate('/feed');
+          }
+        }
       } catch (err: any) {
         setErrorMsg(err.message || t("error"));
       } finally {
@@ -123,7 +127,11 @@ export default function Register({  }: RegisterProps) {
       }
     } else {
       setLoading(false);
-      setStep("email-sent");
+      if (role === 'tutor') {
+        navigate('/tutor/onboarding');
+      } else {
+        navigate('/feed');
+      }
     }
   };
 
@@ -227,7 +235,7 @@ export default function Register({  }: RegisterProps) {
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>
-        ) : step === 2 ? (
+        ) : (
           <form onSubmit={handleSubmitRegistration} className="space-y-4">
             <div>
               <label className="block text-sm font-semibold text-navy mb-1.5">{t("full_name")}</label>
@@ -394,49 +402,6 @@ export default function Register({  }: RegisterProps) {
               </button>
             </div>
           </form>
-        ) : (
-          <div className="text-center py-8 px-4">
-            <div className="w-20 h-20 bg-teal-100/50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Mail size={40} className="text-teal-600" />
-            </div>
-            <h2 className="font-lexend font-semibold text-2xl text-navy mb-2">
-              {t('email_verify_sent')}
-            </h2>
-            <p className="font-bangla text-gray-600 mb-6">
-              <span className="font-semibold text-navy">
-                {email}
-              </span>
-              {' '}-এ একটি যাচাই লিংক পাঠানো হয়েছে।
-              ইমেইল চেক করুন এবং লিংকে ক্লিক করুন।
-            </p>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-sm text-navy font-bangla mb-6">
-              ⚠️ Spam/Junk folder চেক করুন যদি 
-              ইমেইল না আসে।
-            </div>
-            <button
-              onClick={() => navigate('/login')}
-              className="w-full bg-navy hover:bg-navy-800 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-sm flex items-center justify-center"
-            >
-              লগইন পেজে যান
-            </button>
-            <button
-              onClick={async () => {
-                if (isSupabaseConfigured && supabase) {
-                  await supabase.auth.resend({
-                    type: 'signup',
-                    email: email,
-                    options: {
-                      emailRedirectTo: `${window.location.origin}/auth/callback`
-                    }
-                  });
-                  alert('ইমেইল পুনরায় পাঠানো হয়েছে');
-                }
-              }}
-              className="mt-4 text-sm text-gray-500 hover:text-navy transition-colors"
-            >
-              ইমেইল পাননি? আবার পাঠান
-            </button>
-          </div>
         )}
 
         <div className="mt-8 text-center text-sm text-text-muted">

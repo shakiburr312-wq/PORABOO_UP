@@ -47,7 +47,6 @@ export const translations: Record<string, Record<string, string>> = {
     "full_name_placeholder": "Your full name",
     "phone_label": "Phone Number",
     "phone_placeholder": "01XXXXXXXXX",
-    "email_verify_sent": "Verification email sent!",
     "email_verify_check": "Please check your email",
     "forgot_title": "Reset Password",
     "forgot_subtitle": "We'll send a reset link to your email",
@@ -220,7 +219,6 @@ export const translations: Record<string, Record<string, string>> = {
     "expected_salary": "Expected Salary (BDT/month)",
     "about_you": "About You",
     "demo_link": "Demo Class Link",
-    "save": "Save & Complete",
     "ex_name_en": "e.g. Shakibur Rahman",
     "ex_village_thana": "Village, Thana, District",
     "ex_house_road": "House, Road, Area",
@@ -237,24 +235,9 @@ export const translations: Record<string, Record<string, string>> = {
     "fill_req_fields": "Please fill all required fields before saving.",
     "saving_profile": "Saving profile...",
     // Feed
-    "feed_placeholder": "Share your experience or ask a question...",
-    "feed_post_btn": "Post",
-    "feed_connect": "Connect",
-    "feed_connected": "Connected ✓",
-    "feed_pending": "Request Sent",
-    "feed_like": "Like",
-    "feed_comment": "Comment",
-    "feed_share": "Share",
-    "feed_recent_jobs": "Recent Jobs",
-    "feed_see_more": "See More",
     "feed_partners": "Tuition Partners",
-    "feed_visibility_public": "Public",
-    "feed_visibility_tutors": "Tutors Only",
-    "feed_visibility_guardians": "Guardians Only",
-    "feed_warning": "Do not share phone/email",
     "feed_profile": "Profile",
     "feed_settings": "Settings",
-    "feed_add_image": "Add Image",
     "profile_completion": "Profile Completion",
 
 
@@ -324,8 +307,6 @@ export const translations: Record<string, Record<string, string>> = {
     "view_applicants": "View Applicants",
     "applied": "Applied",
     "optional_cover": "Optional: Why are you a good fit?",
-    "cancel": "Cancel",
-    "confirm": "Confirm",
     "apply": "Apply Now",
     "login_to_apply": "Login to Apply",
     "only_tutors_apply": "Only tutors can apply",
@@ -408,7 +389,6 @@ export const translations: Record<string, Record<string, string>> = {
     "reenter_pass": "Re-enter the password",
     "next_otp": "Next Step (OTP Verification) →",
     "complete_reg_otp": "Complete Registration (OTP Verification) →",
-    "already_have_acc": "Already have an account?",
     "login_now": "Login Now",
     "back_to_home": "Back to Home",
     "login_portal": "Login Portal",
@@ -431,18 +411,12 @@ export const translations: Record<string, Record<string, string>> = {
     "demo_pass": "Password: Use any password.",
     "create_new_account": "Create New Account",
     "want_new_account": "Want to create a new account?",
-    "nav_home": "Home",
-    "nav_feed": "Feed",
-    "nav_jobs": "Jobs",
     "nav_notify": "Notify",
-    "nav_profile": "Profile",
     "nav_how_it_works": "How it Works?",
     "nav_model": "Our Model",
     "nav_my_dashboard": "My Dashboard",
     "nav_tutor": "Tutor",
     "nav_guardian": "Guardian",
-    "nav_logout": "Logout",
-    "nav_login": "Login",
     "nav_get_started": "Get Started",
     "nav_badge": "Smart Tuition",
 
@@ -516,7 +490,6 @@ export const translations: Record<string, Record<string, string>> = {
     "hiw_safety": "PORABOO Platform's first rule: No direct or advance contact info needs to be shared.",
 
     // Dashboard / Common
-    "loading": "Loading...",
     
     // Guardian Dashboard
     "settings": "Settings",
@@ -546,7 +519,6 @@ export const translations: Record<string, Record<string, string>> = {
     
     // Loaders
     "wait": "Please wait...",
-    "verifying": "Verifying...",
     "cv_reading": "Reading CV...",
     "cv_analyzing": "Analyzing data...",
     "cv_filling": "Filling form...",
@@ -600,7 +572,6 @@ export const translations: Record<string, Record<string, string>> = {
     "full_name_placeholder": "আপনার পুরো নাম",
     "phone_label": "ফোন নম্বর",
     "phone_placeholder": "01XXXXXXXXX",
-    "email_verify_sent": "যাচাই ইমেইল পাঠানো হয়েছে!",
     "email_verify_check": "আপনার ইমেইল চেক করুন",
     "forgot_title": "পাসওয়ার্ড রিসেট করুন",
     "forgot_subtitle": "আপনার ইমেইলে রিসেট লিংক পাঠানো হবে",
@@ -774,7 +745,6 @@ export const translations: Record<string, Record<string, string>> = {
     "expected_salary": "প্রত্যাশিত বেতন (টাকা/মাস)",
     "about_you": "আপনার সম্পর্কে",
     "demo_link": "ডেমো ক্লাসের লিংক",
-    "save": "সংরক্ষণ করুন",
     "ex_name_en": "যেমন: সাকিবুর রহমান",
     "ex_village_thana": "গ্রাম, থানা, জেলা",
     "ex_house_road": "বাড়ি, রাস্তা, এলাকা",
@@ -791,24 +761,9 @@ export const translations: Record<string, Record<string, string>> = {
     "fill_req_fields": "সংরক্ষণ করার আগে দয়া করে সমস্ত প্রয়োজনীয় ঘর পূরণ করুন।",
     "saving_profile": "প্রোফাইল সংরক্ষণ করা হচ্ছে...",
     // Feed
-    "feed_placeholder": "আপনার অভিজ্ঞতা বা প্রশ্ন শেয়ার করুন...",
-    "feed_post_btn": "পোস্ট করুন",
-    "feed_connect": "সংযুক্ত হন",
-    "feed_connected": "সংযুক্ত ✓",
-    "feed_pending": "অনুরোধ পাঠানো হয়েছে",
-    "feed_like": "লাইক",
-    "feed_comment": "মন্তব্য",
-    "feed_share": "শেয়ার",
-    "feed_recent_jobs": "সাম্প্রতিক জব",
-    "feed_see_more": "আরও দেখুন",
     "feed_partners": "টিউশন পাটনার",
-    "feed_visibility_public": "সবাই",
-    "feed_visibility_tutors": "শুধু টিউটর",
-    "feed_visibility_guardians": "শুধু Guardian",
-    "feed_warning": "ফোন/ইমেইল শেয়ার করবেন না",
     "feed_profile": "প্রোফাইল",
     "feed_settings": "সেটিংস",
-    "feed_add_image": "ছবি যুক্ত করুন",
 
 
     // Guardian Dashboard
@@ -877,8 +832,6 @@ export const translations: Record<string, Record<string, string>> = {
     "view_applicants": "আবেদনকারী দেখুন",
     "applied": "আবেদন করা হয়েছে",
     "optional_cover": "ঐচ্ছিক: আপনি কেন এই জবের জন্য উপযুক্ত?",
-    "cancel": "বাতিল",
-    "confirm": "নিশ্চিত করুন",
     "apply": "আবেদন করুন",
     "login_to_apply": "আবেদন করতে লগইন করুন",
     "only_tutors_apply": "শুধুমাত্র টিউটররা আবেদন করতে পারবেন",
@@ -961,7 +914,6 @@ export const translations: Record<string, Record<string, string>> = {
     "reenter_pass": "পাসওয়ার্ডটি পুনরায় দিন",
     "next_otp": "পরবর্তী ধাপ (OTP ভেরিফিকেশন) →",
     "complete_reg_otp": "নিবন্ধন সম্পন্ন করুন (OTP ভেরিফিকেশন) →",
-    "already_have_acc": "ইতিমধ্যে অ্যাকাউন্ট আছে?",
     "login_now": "লগইন করুন",
     "back_to_home": "মূল পাতায় ফিরুন",
     "login_portal": "লগইন পোর্টাল",
@@ -985,18 +937,12 @@ export const translations: Record<string, Record<string, string>> = {
     "create_new_account": "নতুন অ্যাকাউন্ট তৈরি করুন",
     "want_new_account": "নতুন অ্যাকাউন্ট তৈরি করতে চান?",
     // Navbar
-    "nav_home": "মূল পাতা",
-    "nav_feed": "ফিড",
-    "nav_jobs": "জব",
     "nav_notify": "নোটিফাই",
-    "nav_profile": "প্রোফাইল",
     "nav_how_it_works": "কিভাবে কাজ করে?",
     "nav_model": "আমাদের মডেল",
     "nav_my_dashboard": "আমার ড্যাশবোর্ড",
     "nav_tutor": "টিউটর",
     "nav_guardian": "Guardian",
-    "nav_logout": "লগআউট করুন",
-    "nav_login": "লগইন করুন",
     "nav_get_started": "শুরু করুন",
     "nav_badge": "স্মার্ট টিউশন",
 
@@ -1069,7 +1015,6 @@ export const translations: Record<string, Record<string, string>> = {
     "hiw_safety": "PORABOO প্ল্যাটফর্মের প্রথম নিয়ম: কোনো সরাসরি ও অগ্রিম কন্টাক্ট ইনফরমেশন শেয়ার করার প্রয়োজন নেই।",
 
     // Dashboard / Common
-    "loading": "লোড হচ্ছে...",
     
     // Guardian Dashboard
     "settings": "সেটিংস",
@@ -1099,7 +1044,6 @@ export const translations: Record<string, Record<string, string>> = {
     
     // Loaders
     "wait": "অপেক্ষা করুন...",
-    "verifying": "যাচাই করা হচ্ছে...",
     "cv_reading": "CV পড়া হচ্ছে...",
     "cv_analyzing": "তথ্য বিশ্লেষণ করা হচ্ছে...",
     "cv_filling": "ফর্ম পূরণ করা হচ্ছে...",
