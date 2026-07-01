@@ -22,6 +22,9 @@ import JobBoard from "./pages/JobBoard";
 import Feed from "./pages/Feed";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
+import { AdminRoute } from "./components/AdminRoute";
 
 import HeroSection from "./components/HeroSection";
 import StatsSection from "./components/StatsSection";
@@ -96,6 +99,14 @@ export default function App() {
               <PublicOnlyRoute>
                 <Register />
               </PublicOnlyRoute>
+            } />
+            <Route path="/admin/login" element={
+              <AdminLogin />
+            } />
+            <Route path="/admin" element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
             } />
 
             {/* Auth callback — always accessible */}
