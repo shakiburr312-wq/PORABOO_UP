@@ -153,7 +153,7 @@ export default function HeroSection({ onJoinAsTutor, onSearchTutor }: HeroSectio
               />
 
               {/* Secure Platform Shield (Center) */}
-              <g className="animate-float-1">
+              <g className="float-1">
                 {/* Outer Shield Backing */}
                 <path
                   d="M250 170 L310 200 V270 C310 320, 250 350, 250 350 C250 350, 190 320, 190 270 V200 L250 170 Z"
@@ -176,7 +176,7 @@ export default function HeroSection({ onJoinAsTutor, onSearchTutor }: HeroSectio
               </g>
 
               {/* Tutor Avatar Circle (Top Right) */}
-              <g className="animate-float-2">
+              <g className="float-2">
                 <circle cx="380" cy="120" r="55" fill="white" stroke="#1B2F6E" strokeWidth="4" />
                 <circle cx="380" cy="120" r="48" fill="#F8F9FF" />
                 {/* Tutor icon: Graduation Cap inside avatar */}
@@ -202,7 +202,7 @@ export default function HeroSection({ onJoinAsTutor, onSearchTutor }: HeroSectio
               </g>
 
               {/* Student/Guardian Avatar Circle (Bottom Left) */}
-              <g className="animate-float-1" style={{ animationDelay: "1.5s" }}>
+              <g className="float-3">
                 <circle cx="120" cy="380" r="55" fill="white" stroke="#1B2F6E" strokeWidth="4" />
                 <circle cx="120" cy="380" r="48" fill="#F8F9FF" />
                 {/* Guardian icon: House or Family */}

@@ -16,6 +16,8 @@ import {
   User,
   Settings
 } from "lucide-react";
+import SkeletonCard from "../components/SkeletonCard";
+import BounceDots from "../components/BounceDots";
 import { useLanguage } from "../hooks/useLanguage";
 
 interface FeedProps {
@@ -389,20 +391,8 @@ export default function Feed({  }: FeedProps) {
           {/* Feed Posts */}
           <div className="space-y-6">
             {loadingPosts ? (
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 animate-pulse">
-                <div className="flex gap-3 mb-4">
-                  <div className="w-10 h-10 bg-slate-200 rounded-full"></div>
-                  <div className="flex-1">
-                    <div className="h-4 bg-slate-200 rounded w-1/4 mb-2"></div>
-                    <div className="h-3 bg-slate-200 rounded w-1/5"></div>
-                  </div>
-                </div>
-                <div className="h-3 bg-slate-200 rounded w-full mb-2"></div>
-                <div className="h-3 bg-slate-200 rounded w-5/6 mb-4"></div>
-                <div className="flex gap-4 pt-4 border-t border-slate-100">
-                  <div className="h-5 bg-slate-200 rounded w-12"></div>
-                  <div className="h-5 bg-slate-200 rounded w-12"></div>
-                </div>
+              <div className="space-y-4">
+                {[1,2,3].map(i => <SkeletonCard key={i} />)}
               </div>
             ) : posts.length === 0 ? (
               <div className="text-center py-10 bg-white rounded-2xl border border-slate-100">
@@ -521,13 +511,7 @@ export default function Feed({  }: FeedProps) {
             
             {/* Infinite Scroll Loader */}
             {!loadingPosts && posts.length > 0 && (
-              <div className="flex justify-center items-center py-8">
-                <div className="flex gap-2">
-                  <div className="w-2.5 h-2.5 bg-yellow rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                  <div className="w-2.5 h-2.5 bg-yellow rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                  <div className="w-2.5 h-2.5 bg-yellow rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
-                </div>
-              </div>
+              <BounceDots />
             )}
           </div>
         </div>

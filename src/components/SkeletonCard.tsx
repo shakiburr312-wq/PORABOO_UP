@@ -1,34 +1,28 @@
-interface SkeletonCardProps {
-  className?: string;
-}
-
-export default function SkeletonCard({ className = "" }: SkeletonCardProps) {
+export default function SkeletonCard() {
   return (
-    <div className={`bg-white rounded-3xl p-6 border border-slate-100 shadow-sm overflow-hidden flex flex-col gap-4 ${className}`}>
-      {/* Header/Title Area */}
-      <div className="flex justify-between items-start">
-        <div className="flex flex-col gap-2 w-3/4">
-          <div className="h-6 w-full rounded animate-shimmer"></div>
-          <div className="h-4 w-2/3 rounded animate-shimmer"></div>
+    <div className="bg-white rounded-2xl p-4 
+      shadow-sm animate-pulse">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-full 
+          bg-gray-200" />
+        <div className="flex-1">
+          <div className="h-3 bg-gray-200 
+            rounded w-1/3 mb-2" />
+          <div className="h-2 bg-gray-200 
+            rounded w-1/4" />
         </div>
-        <div className="h-8 w-16 rounded-full animate-shimmer shrink-0"></div>
       </div>
-      
-      {/* Body lines */}
-      <div className="flex flex-col gap-3 mt-2">
-        <div className="h-4 w-full rounded animate-shimmer"></div>
-        <div className="h-4 w-5/6 rounded animate-shimmer"></div>
-        <div className="h-4 w-4/6 rounded animate-shimmer"></div>
+      <div className="space-y-2">
+        <div className="h-3 bg-gray-200 rounded w-full" />
+        <div className="h-3 bg-gray-200 rounded w-4/5" />
+        <div className="h-3 bg-gray-200 rounded w-3/5" />
       </div>
-      
-      {/* Footer / Meta info */}
-      <div className="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
-        <div className="flex gap-2">
-          <div className="h-6 w-16 rounded-full animate-shimmer"></div>
-          <div className="h-6 w-16 rounded-full animate-shimmer"></div>
-        </div>
-        <div className="h-8 w-24 rounded-full animate-shimmer"></div>
+      <div className="flex gap-4 mt-4 pt-3 
+        border-t border-gray-100">
+        <div className="h-3 bg-gray-200 rounded w-16" />
+        <div className="h-3 bg-gray-200 rounded w-16" />
+        <div className="h-3 bg-gray-200 rounded w-16" />
       </div>
     </div>
-  );
+  )
 }

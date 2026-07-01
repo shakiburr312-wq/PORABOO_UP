@@ -1,12 +1,17 @@
-export default function BounceDots({ text }: { text?: string }) {
+export default function BounceDots() {
   return (
-    <div className="flex flex-col items-center justify-center p-6 gap-3">
-      <div className="flex gap-2">
-        <div className="w-2.5 h-2.5 bg-navy rounded-full animate-bounce-dot" style={{ animationDelay: '0s' }}></div>
-        <div className="w-2.5 h-2.5 bg-navy rounded-full animate-bounce-dot" style={{ animationDelay: '0.2s' }}></div>
-        <div className="w-2.5 h-2.5 bg-navy rounded-full animate-bounce-dot" style={{ animationDelay: '0.4s' }}></div>
-      </div>
-      {text && <span className="text-sm font-medium text-text-muted">{text}</span>}
+    <div className="flex items-center 
+      justify-center gap-1.5 py-4">
+      {[0, 1, 2].map(i => (
+        <div
+          key={i}
+          className="w-2 h-2 rounded-full bg-[#1B2F6E]"
+          style={{
+            animation: `bounce 0.8s ease-in-out 
+              ${i * 0.15}s infinite`
+          }}
+        />
+      ))}
     </div>
-  );
+  )
 }

@@ -29,15 +29,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const fetchSession = async () => {
       if (!supabase) {
         setProfile(getLocalCurrentUser());
-        setLoading(false);
+        setTimeout(() => setLoading(false), 1000);
         return;
       }
       
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const minDelay = new Promise(resolve => setTimeout(resolve, 1000));
+        
+        let session = null;
+        if (supabase) {
+          const { data } = await supabase.auth.getSession();
+          session = data.session;
+        }
+
         setUser(session?.user ?? null);
         
-        if (session?.user) {
+        if (session?.user && supabase) {
           const { data: p } = await supabase
             .from('profiles')
             .select('*')
@@ -52,6 +59,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           setProfile(null);
         }
+        
+        await minDelay;
       } catch (err) {
         console.error("Supabase auth error", err);
         setProfile(getLocalCurrentUser());
