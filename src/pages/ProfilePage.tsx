@@ -2,7 +2,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import { Camera, MapPin, GraduationCap, Briefcase, BookOpen, Layers, Globe, DollarSign, Edit2, Link as LinkIcon, Edit, Users, X, Plus } from "lucide-react";
-import { isSupabaseConfigured, supabase, Profile } from '@/lib/supabase';
+import { supabase, Profile } from '@/lib/supabase';
 import { useLanguage } from "../hooks/useLanguage";
 import BounceDots from "../components/BounceDots";
 import Navbar from "../components/Navbar";
@@ -45,7 +45,7 @@ export default function ProfilePage() {
 
   const fetchProfileData = async () => {
     setLoading(true);
-    if (isSupabaseConfigured && supabase) {
+    if (supabase) {
       // 1. Fetch public.profiles
       const { data: pData } = await supabase
         .from('profiles')
@@ -99,7 +99,7 @@ export default function ProfilePage() {
     const file = e.target.files[0];
     setUploadingAvatar(true);
     try {
-      if (isSupabaseConfigured && supabase) {
+      if (supabase) {
         const fileExt = file.name.split('.').pop();
         const fileName = `profile.jpg`; 
         const filePath = `${profileId}/${fileName}?t=${Date.now()}`;
@@ -129,7 +129,7 @@ export default function ProfilePage() {
     const file = e.target.files[0];
     setUploadingCover(true);
     try {
-      if (isSupabaseConfigured && supabase) {
+      if (supabase) {
         const filePath = `${profileId}/cover.jpg?t=${Date.now()}`;
         
         const { data, error } = await supabase.storage
@@ -150,7 +150,7 @@ export default function ProfilePage() {
   };
 
   const handleSaveBio = async () => {
-    if (!isSupabaseConfigured || !supabase) return;
+    if (!supabase) return;
     try {
       await supabase.from('profiles').update({ bio: bioInput }).eq('id', profileId);
       await supabase.from('tutor_profiles').update({ bio: bioInput }).eq('id', profileId);
@@ -176,7 +176,7 @@ export default function ProfilePage() {
   };
 
   const handleSaveProfileInfo = async () => {
-    if (!isSupabaseConfigured || !supabase) return;
+    if (!supabase) return;
     setSavingEdit(true);
     try {
       // Update profiles (bio, living_area if needed)
@@ -222,7 +222,7 @@ export default function ProfilePage() {
   const handlePostSubmit = async () => {
     if (!postContent.trim()) return;
     try {
-      if (isSupabaseConfigured && supabase) {
+      if (supabase) {
         const { error } = await supabase.from('posts').insert([{
           author_id: currentUser.id,
           content: postContent,

@@ -26,6 +26,7 @@ import SettingsPage from "./pages/SettingsPage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import { AdminRoute } from "./components/AdminRoute";
+import SelectRole from "./pages/SelectRole";
 
 import HeroSection from "./components/HeroSection";
 import StatsSection from "./components/StatsSection";
@@ -121,9 +122,13 @@ export default function App() {
             } />
 
             {/* Auth callback — always accessible */}
-            <Route path="/auth/callback" 
-              element={<AuthCallback />} 
-            />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            
+            <Route path="/select-role" element={
+              <ProtectedRoute>
+                <SelectRole />
+              </ProtectedRoute>
+            } />
 
             {/* Protected — redirect to login if not logged in */}
             <Route path="/feed" element={

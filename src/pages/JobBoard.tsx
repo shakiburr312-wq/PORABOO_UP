@@ -1,7 +1,7 @@
 import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Profile, supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { Profile, supabase } from '@/lib/supabase';
 import { Search, MapPin, Clock, Calendar, GraduationCap, DollarSign, Filter, ChevronDown, UserRound } from "lucide-react";
 import { SUBJECTS_OPTIONS, DHAKA_LOCATIONS, CLASS_LEVELS } from "../lib/constants";
 import { useLanguage } from "../hooks/useLanguage";
@@ -36,7 +36,7 @@ export default function JobBoard({  }: JobBoardProps) {
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      if (isSupabaseConfigured && supabase) {
+      if (supabase) {
         const { data, error } = await supabase
           .from('job_posts')
           .select('*')
@@ -115,7 +115,7 @@ export default function JobBoard({  }: JobBoardProps) {
   const handleApply = async (jobId: string) => {
     if (!currentUser) return;
     
-    if (isSupabaseConfigured && supabase) {
+    if (supabase) {
       await supabase.from('job_applications').insert([{
         job_id: jobId,
         tutor_id: currentUser.id,

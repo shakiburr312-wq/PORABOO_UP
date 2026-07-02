@@ -2,7 +2,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, FormEvent } from "react";
 import { Lock, Eye, EyeOff, Shield } from "lucide-react";
-import { Profile, isSupabaseConfigured, supabase } from '@/lib/supabase';
+import { Profile, supabase } from '@/lib/supabase';
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useLanguage } from "../hooks/useLanguage";
 

@@ -1,149 +1,74 @@
-import { useState, FormEvent } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Lock, CheckCircle2, ShieldAlert, RefreshCw, KeyRound, Eye, EyeOff } from "lucide-react";
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
-import { useLanguage } from "../hooks/useLanguage";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { supabase } from '@/lib/supabase';
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function ResetPassword() {
   const navigate = useNavigate();
-  const { t } = useLanguage();
-  
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [newPass, setNewPass] = useState("");
+  const [confirmPass, setConfirmPass] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  const handleReset = async (e: FormEvent) => {
+  const showError = (msg: string) => setErrorMsg(msg);
+
+  const resetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMsg(null);
-    setSuccessMsg(null);
-
-    if (newPassword.length < 6) {
-      setErrorMsg("পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে");
+    if (newPass !== confirmPass) {
+      showError('পাসওয়ার্ড মিলছে না');
       return;
     }
-
-    if (newPassword !== confirmPassword) {
-      setErrorMsg("পাসওয়ার্ড মিলছে না");
+    if (newPass.length < 6) {
+      showError('পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে');
       return;
     }
 
     setLoading(true);
+    const { error } = await supabase.auth.updateUser({ password: newPass });
 
-    try {
-      if (!isSupabaseConfigured) {
-        setErrorMsg("সার্ভার সংযোগ ব্যর্থ হয়েছে");
-        setLoading(false);
-        return;
-      }
-      const { error } = await supabase.auth.updateUser({ password: newPassword });
-
-      if (error) {
-        setErrorMsg(error.message);
-        return;
-      }
-
-      setSuccessMsg("পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!");
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
-    } catch (err: any) {
-      setErrorMsg(err.message || "কিছু ভুল হয়েছে");
-    } finally {
+    if (error) {
+      showError(error.message);
       setLoading(false);
+      return;
     }
+
+    alert('পাসওয়ার্ড পরিবর্তন সফল হয়েছে! ✓');
+    navigate('/login');
   };
 
   return (
-    <div className="min-h-screen form-page-bg flex flex-col justify-center items-center px-4 pt-20 pb-16 relative select-none">
-      <div className="w-full max-w-md glass-card p-8 sm:p-10 relative z-10 animate-fadeInUp">
-        <div className="text-center mb-8">
-          <span className="logo-font text-3xl tracking-wider text-navy block mb-1">
-            PORABOO
-          </span>
-          <span className="text-xs font-bold text-yellow bg-yellow/15 px-3 py-1 rounded-full uppercase inline-block">
-            নতুন পাসওয়ার্ড
-          </span>
-        </div>
-
+    <div className="min-h-screen bg-[#F0F2F5] flex flex-col justify-center items-center px-4 pt-20 pb-16 relative select-none">
+      <div className="w-full max-w-[420px] bg-white rounded-[20px] p-8 shadow-[0_4px_24px_rgba(0,0,0,0.08)] relative z-10 animate-fadeInUp">
+        <h1 className="text-3xl font-logo text-navy text-center mb-6">PORABOO</h1>
+        
         {errorMsg && (
-          <div className="mb-4 p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 flex items-start gap-2">
-            <ShieldAlert className="w-4 h-4 text-red-500 shrink-0" />
-            <span>{errorMsg}</span>
+          <div className="mb-6 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm font-medium rounded-r-md">
+            {errorMsg}
           </div>
         )}
 
-        {successMsg && (
-          <div className="mb-4 p-3.5 rounded-xl bg-green-50 border border-green-200 text-xs text-green-700 flex items-start gap-2 text-left">
-            <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-            <span className="leading-relaxed">{successMsg}</span>
-          </div>
-        )}
-
-        <form onSubmit={handleReset} className="space-y-4">
-          <div>
-            <label className="block text-sm font-semibold text-navy mb-1.5">{t("password") || "নতুন পাসওয়ার্ড"}</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
-                <Lock className="w-5 h-5" />
-              </div>
-              <input
-                type={showPassword ? "text" : "password"}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full pl-10 pr-12 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-navy focus:border-navy outline-none transition-all text-sm font-medium placeholder:font-normal"
-                placeholder="••••••••"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-navy transition-all duration-200 focus:outline-none"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
+        <form onSubmit={resetPassword} className="space-y-4 font-bangla">
+          <h2 className="text-xl font-bold text-navy text-center mb-4">নতুন পাসওয়ার্ড সেট করুন</h2>
+          
+          <div className="relative">
+            <input type={showPassword ? "text" : "password"} value={newPass} onChange={e => setNewPass(e.target.value)} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-navy focus:border-navy outline-none" placeholder="নতুন পাসওয়ার্ড" required />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-navy">
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
           
-          <div>
-            <label className="block text-sm font-semibold text-navy mb-1.5">{t("confirm_pass") || "পাসওয়ার্ড নিশ্চিত করুন"}</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
-                <KeyRound className="w-5 h-5" />
-              </div>
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full pl-10 pr-12 py-3 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-navy focus:border-navy outline-none transition-all text-sm font-medium placeholder:font-normal"
-                placeholder="••••••••"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-navy transition-all duration-200 focus:outline-none"
-              >
-                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
+          <div className="relative">
+            <input type={showConfirmPassword ? "text" : "password"} value={confirmPass} onChange={e => setConfirmPass(e.target.value)} className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-navy focus:border-navy outline-none" placeholder="পাসওয়ার্ড নিশ্চিত করুন" required />
+            <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-navy">
+              {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
-
-          <button
-            type="submit"
-            disabled={loading || !!successMsg}
-            className="w-full py-3.5 bg-yellow hover:bg-yellow-400 text-navy font-bold rounded-xl text-sm shadow-md transition-all flex items-center justify-center gap-2 mt-4 disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <>
-                <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>পরিবর্তন হচ্ছে...</span>
-              </>
-            ) : (
-              <span>পাসওয়ার্ড পরিবর্তন করুন</span>
-            )}
+          
+          <button type="submit" disabled={loading} className="w-full bg-yellow hover:bg-yellow-400 text-navy font-bold py-3.5 rounded-full transition-all flex items-center justify-center gap-2 mt-4">
+            {loading ? <LoadingSpinner size={24} color="navy" /> : "পাসওয়ার্ড সেভ করুন"}
           </button>
         </form>
       </div>

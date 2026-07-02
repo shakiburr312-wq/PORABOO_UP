@@ -1,7 +1,7 @@
 import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, FormEvent } from "react";
-import { Profile, supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { Profile, supabase } from '@/lib/supabase';
 import { SUBJECTS_OPTIONS, CLASS_LEVELS, MEDIUM_OPTIONS, DAYS_PER_WEEK, TIME_PREFERENCES, DHAKA_LOCATIONS, GENDER_PREFERENCES } from "../lib/constants";
 import { ArrowLeft, RefreshCw, Search, Check, X, MapPin } from "lucide-react";
 import { useLanguage } from "../hooks/useLanguage";
@@ -60,7 +60,7 @@ export default function JobPostCreate({  }: JobPostCreateProps) {
     setLoading(true);
     setErrorMsg(null);
 
-    if (isSupabaseConfigured && supabase) {
+    if (supabase) {
       const { error } = await supabase.from('job_posts').insert([{
         guardian_id: currentUser.id,
         subjects: formData.subjects,

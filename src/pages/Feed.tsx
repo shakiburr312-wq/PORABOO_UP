@@ -1,7 +1,7 @@
 import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { Profile, supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { Profile, supabase } from '@/lib/supabase';
 import { 
   Heart, 
   MessageCircle, 
@@ -47,7 +47,7 @@ export default function Feed({  }: FeedProps) {
   const fetchPosts = async () => {
     setLoadingPosts(true);
     try {
-      if (isSupabaseConfigured && supabase) {
+      if (supabase) {
         const { data, error } = await supabase
           .from('posts')
           .select(`
@@ -127,7 +127,7 @@ export default function Feed({  }: FeedProps) {
     setIsPosting(true);
 
     try {
-      if (isSupabaseConfigured && supabase) {
+      if (supabase) {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 

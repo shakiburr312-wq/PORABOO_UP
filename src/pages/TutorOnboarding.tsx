@@ -2,7 +2,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, ChangeEvent, FormEvent, useMemo } from "react";
 import {  FileText, ChevronRight, Edit3, Image as ImageIcon, MapPin, GraduationCap, DollarSign, Brain, PlusCircle, Check, RefreshCw, X, Search, AlertCircle , CheckCircle2 } from "lucide-react";
-import { Profile, supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { Profile, supabase } from '@/lib/supabase';
 import { DHAKA_LOCATIONS, EDUCATION_OPTIONS, EXPERIENCE_OPTIONS, SUBJECTS_OPTIONS, CLASS_LEVELS_TUTOR, MEDIUM_OPTIONS } from "../lib/constants";
 import { useLanguage } from "../hooks/useLanguage";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -44,7 +44,7 @@ export default function TutorOnboarding() {
   // On page load, fetch existing profile:
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!isSupabaseConfigured || !supabase) return;
+      if (!supabase) return;
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
@@ -149,7 +149,7 @@ export default function TutorOnboarding() {
     setLoading(true);
     setLoadingMsg(t("saving_profile"));
 
-    if (isSupabaseConfigured && supabase) {
+    if (supabase) {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         setLoading(false);

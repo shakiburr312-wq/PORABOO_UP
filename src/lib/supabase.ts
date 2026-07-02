@@ -8,8 +8,7 @@ export const supabase = createClient(
   supabaseAnonKey || ''
 )
 
-export const isSupabaseConfigured = 
-  Boolean(supabaseUrl && supabaseAnonKey)
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
 
 export interface Profile {
   id: string
