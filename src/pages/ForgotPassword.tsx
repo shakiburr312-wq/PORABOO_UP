@@ -2,6 +2,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, FormEvent } from "react";
 import { Mail, ArrowLeft, Send, CheckCircle2, ShieldAlert, RefreshCw } from "lucide-react";
+import { supabase } from "../lib/supabase";
 
 import { useLanguage } from "../hooks/useLanguage";
 
@@ -13,7 +14,7 @@ export default function ForgotPassword() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
     setSuccessMsg(null);
@@ -25,12 +26,25 @@ export default function ForgotPassword() {
 
     setLoading(true);
 
-    // Simulated email password reset link
-    setTimeout(() => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        email.trim().toLowerCase(),
+        {
+          redirectTo: `${window.location.origin}/#/reset-password`
+        }
+      );
+
+      if (error) {
+        setErrorMsg(error.message);
+        return;
+      }
+
+      setSuccessMsg("পাসওয়ার্ড রিসেট লিংক পাঠানো হয়েছে! ইমেইল চেক করুন।");
+    } catch (err: any) {
+      setErrorMsg(err.message || "কিছু ভুল হয়েছে");
+    } finally {
       setLoading(false);
-      setSuccessMsg(t("pass_reset_link_sent"));
-      setEmail("");
-    }, 1500);
+    }
   };
 
   return (
@@ -58,73 +72,88 @@ export default function ForgotPassword() {
           </span>
         </div>
 
-        <h3 className="text-xl font-bold text-navy mb-2">{t("forgot_password")}</h3>
-        <p className="text-xs sm:text-sm text-text-muted mb-6 leading-relaxed">
-          {t("enter_email_pass_rec")}
-        </p>
-
-        {/* Feedback Messages */}
-        {errorMsg && (
-          <div className="mb-4 p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 flex items-start gap-2">
-            <ShieldAlert className="w-4 h-4 text-red-500 shrink-0" />
-            <span>{errorMsg}</span>
-          </div>
-        )}
-
-        {successMsg && (
-          <div className="mb-4 p-3.5 rounded-xl bg-green-50 border border-green-200 text-xs text-green-700 flex items-start gap-2 text-left">
-            <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-            <span className="leading-relaxed">{successMsg}</span>
-          </div>
-        )}
-
-        {/* Input Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-navy uppercase block text-left">{t("reg_email_addr")}</label>
-            <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-text-muted" />
-              <input
-                type="email"
-                required
-                placeholder={t("ex_email")}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-navy-bg border border-navy/10 rounded-xl py-3 pl-11 pr-4 text-sm font-semibold focus:outline-none focus:border-yellow focus:ring-1 focus:ring-yellow transition-all"
-              />
+        {successMsg ? (
+          <div className="text-center py-6">
+            <div className="w-16 h-16 bg-teal/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Mail size={32} className="text-teal" />
             </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3.5 bg-yellow text-navy font-bold rounded-xl text-sm shadow-md hover:bg-yellow/90 hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <>
-                <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>{t("sending_reset_link")}</span>
-              </>
-            ) : (
-              <>
-                <Send className="w-4 h-4" />
-                <span>{t("send_reset_link")}</span>
-              </>
-            )}
-          </button>
-        </form>
-
-        <div className="text-center mt-6 pt-6 border-t border-navy/10">
-          <p className="text-xs text-text-muted">
-            {t("remembered_pass")}{" "}
+            <h3 className="bangla-font font-semibold text-navy text-lg mb-2">
+              ইমেইল পাঠানো হয়েছে!
+            </h3>
+            <p className="bangla-font text-text-muted text-sm">
+              {email}-এ পাসওয়ার্ড রিসেট লিংক পাঠানো হয়েছে। Spam folder চেক করুন।
+            </p>
             <button
-              onClick={() => navigate("/login")}
-              className="font-bold text-blue hover:underline ml-1"
+              onClick={() => navigate('/login')}
+              className="w-full bg-yellow hover:bg-yellow-400 text-navy font-bold py-3.5 px-4 rounded-xl transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 mt-6"
             >
-              {t("login_now")}
+              লগইন পেজে যান
             </button>
-          </p>
-        </div>
+          </div>
+        ) : (
+          <>
+            <h3 className="text-xl font-bold text-navy mb-2">{t("forgot_password")}</h3>
+            <p className="text-xs sm:text-sm text-text-muted mb-6 leading-relaxed">
+              {t("enter_email_pass_rec")}
+            </p>
+
+            {/* Feedback Messages */}
+            {errorMsg && (
+              <div className="mb-4 p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 flex items-start gap-2">
+                <ShieldAlert className="w-4 h-4 text-red-500 shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
+            )}
+
+            {/* Input Form */}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-navy uppercase block text-left">{t("reg_email_addr")}</label>
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-text-muted" />
+                  <input
+                    type="email"
+                    required
+                    placeholder={t("ex_email")}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-navy-bg border border-navy/10 rounded-xl py-3 pl-11 pr-4 text-sm font-semibold focus:outline-none focus:border-yellow focus:ring-1 focus:ring-yellow transition-all"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 bg-yellow text-navy font-bold rounded-xl text-sm shadow-md hover:bg-yellow/90 hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>{t("sending_reset_link")}</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    <span>{t("send_reset_link")}</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="text-center mt-6 pt-6 border-t border-navy/10">
+              <p className="text-xs text-text-muted">
+                {t("remembered_pass")}{" "}
+                <button
+                  onClick={() => navigate("/login")}
+                  className="font-bold text-blue hover:underline ml-1"
+                >
+                  {t("login_now")}
+                </button>
+              </p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

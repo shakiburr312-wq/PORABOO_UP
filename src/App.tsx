@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import AuthCallback from "./pages/AuthCallback";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import TutorOnboarding from "./pages/TutorOnboarding";
 import GuardianDashboard from "./pages/GuardianDashboard";
@@ -98,6 +99,16 @@ export default function App() {
             <Route path="/register" element={
               <PublicOnlyRoute>
                 <Register />
+              </PublicOnlyRoute>
+            } />
+            <Route path="/forgot-password" element={
+              <PublicOnlyRoute>
+                <ForgotPassword />
+              </PublicOnlyRoute>
+            } />
+            <Route path="/reset-password" element={
+              <PublicOnlyRoute>
+                <ResetPassword />
               </PublicOnlyRoute>
             } />
             <Route path="/admin/login" element={

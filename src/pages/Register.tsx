@@ -2,7 +2,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, FormEvent } from "react";
 import { GraduationCap, Users, ShieldCheck, Check, ArrowRight, ArrowLeft, Phone, Mail, MapPin, KeyRound, Eye, EyeOff, Lock } from "lucide-react";
-import { Profile, supabase, isSupabaseConfigured } from "../lib/supabase";
+import { supabase } from "../lib/supabase";
 
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useLanguage } from "../hooks/useLanguage";
@@ -62,98 +62,89 @@ export default function Register({  }: RegisterProps) {
     setSuccessMsg(null);
 
     // Validation
-    if (!fullName.trim()) { setErrorMsg(t("enter_full_name")); return; }
-    if (!phone.trim()) { setErrorMsg(t("enter_valid_phone")); return; }
-    if (!email.trim() || !email.includes("@")) { setErrorMsg(t("enter_valid_email")); return; }
+    if (!fullName.trim()) { setErrorMsg(t("enter_full_name") || "সম্পূর্ণ নাম দিন"); return; }
+    if (!phone.trim()) { setErrorMsg(t("enter_valid_phone") || "সঠিক ফোন নম্বর দিন"); return; }
+    if (!email.trim() || !email.includes("@")) { setErrorMsg(t("enter_valid_email") || "সঠিক ইমেইল দিন"); return; }
     
     if (role === "guardian") {
-      if (!address.trim()) { setErrorMsg(t("enter_current_address")); return; }
-      if (!nid.trim() || nid.length < 10) { setErrorMsg(t("enter_valid_nid")); return; }
+      if (!address.trim()) { setErrorMsg(t("enter_current_address") || "বর্তমান ঠিকানা দিন"); return; }
+      if (!nid.trim() || nid.length < 10) { setErrorMsg(t("enter_valid_nid") || "সঠিক NID দিন"); return; }
     }
     
-    if (!password) { setErrorMsg(t("pass_required")); return; }
-    if (password.length < 6) { setErrorMsg(t("pass_min_6")); return; }
-    if (password !== confirmPassword) { setErrorMsg(t("pass_mismatch")); return; }
+    if (!password) { setErrorMsg(t("pass_required") || "পাসওয়ার্ড দিন"); return; }
+    if (password.length < 6) { setErrorMsg(t("pass_min_6") || "পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে"); return; }
+    if (password !== confirmPassword) { setErrorMsg(t("pass_mismatch") || "পাসওয়ার্ড মিলছে না"); return; }
 
     setLoading(true);
 
-    if (isSupabaseConfigured && supabase) {
-      try {
-        const { data, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-            data: {
-              full_name: fullName,
-              phone: phone,
-              role: role,
-              present_address: role === "guardian" ? address : undefined,
-              nid_number: role === "guardian" ? nid : undefined 
-            }
+    try {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: email.trim().toLowerCase(),
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            phone: phone,
+            role: role,
+            present_address: role === "guardian" ? address : undefined,
+            nid_number: role === "guardian" ? nid : undefined 
           }
+        }
+      });
+
+      if (signUpError) {
+        if (signUpError.message.includes('already registered') || signUpError.message.includes('already been registered')) {
+          setErrorMsg(t('email_already_exists') || "এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে");
+        } else {
+          setErrorMsg(signUpError.message);
+        }
+        return;
+      }
+
+      if (!data.user) {
+        setErrorMsg("রেজিস্ট্রেশন ব্যর্থ হয়েছে");
+        return;
+      }
+
+      // Step 2: Save to profiles table
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: data.user.id,
+          full_name: fullName.trim(),
+          role: role,
+          phone: phone.trim(),
+          email: email.trim().toLowerCase(),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         });
 
-        if (signUpError) {
-          if (signUpError.message.includes('already registered')) {
-            setErrorMsg(t('email_already_exists'));
-          } else {
-            setErrorMsg(signUpError.message);
-          }
-          setLoading(false);
-          return;
-        }
-
-        if (data.user) {
-          await supabase.from('profiles').upsert({
-            id: data.user.id,
-            full_name: fullName,
-            role: role,
-            phone: phone,
-            email: email,
-            created_at: new Date().toISOString()
-          });
-
-          if (role === 'tutor') {
-            navigate('/tutor/onboarding');
-          } else {
-            navigate('/feed');
-          }
-        }
-      } catch (err: any) {
-        setErrorMsg(err.message || t("error"));
-      } finally {
-        setLoading(false);
+      if (profileError) {
+        console.error('Profile save error:', profileError);
       }
-    } else {
-      setLoading(false);
+
+      // Step 3: Auto login after register
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password
+      });
+
+      if (loginError) {
+        navigate('/login');
+        return;
+      }
+
       if (role === 'tutor') {
         navigate('/tutor/onboarding');
       } else {
         navigate('/feed');
       }
+    } catch (err: any) {
+      setErrorMsg(err.message || t("error") || "কিছু ভুল হয়েছে");
+    } finally {
+      setLoading(false);
     }
   };
-
-  if (successMsg) {
-    return (
-      <div className="min-h-screen form-page-bg flex flex-col justify-center items-center px-4 py-20 text-center">
-        <div className="bg-white p-8 rounded-xl shadow-md max-w-md w-full border border-gray-100 animate-fadeInUp">
-          <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Mail className="w-8 h-8" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t("email_verify_check")}</h2>
-          <p className="text-gray-600 mb-6">{successMsg}</p>
-          <button 
-            onClick={() => navigate("/login")}
-            className="w-full bg-[#1B2F6E] text-white font-semibold py-3 rounded-lg hover:bg-navy-800 transition-colors"
-          >
-            {t("login_here")}
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div id="register-container" className="min-h-screen form-page-bg flex flex-col justify-center items-center px-4 pt-20 pb-16 relative select-none">

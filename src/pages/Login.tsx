@@ -2,7 +2,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, FormEvent } from "react";
 import { Mail, Lock, ArrowLeft, Eye, EyeOff } from "lucide-react";
-import { Profile, isSupabaseConfigured, setLocalCurrentUser, supabase } from "../lib/supabase";
+import { Profile, setLocalCurrentUser, supabase } from "../lib/supabase";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useLanguage } from "../hooks/useLanguage";
 
@@ -43,65 +43,60 @@ export default function Login() {
     setLoading(true);
 
     try {
-      if (isSupabaseConfigured && supabase) {
-        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: email.trim().toLowerCase(),
+        password
+      });
 
-        if (authError) {
-          if (authError.message.includes("Invalid")) {
-            setErrorMsg(t("login_error_invalid"));
-          } else if (authError.message.includes("Email not confirmed")) {
-            setErrorMsg(t("login_error_unverified"));
-          } else {
-            setErrorMsg(t("login_error_general"));
-          }
-          setLoading(false);
-          return;
+      if (authError) {
+        if (authError.message.includes("Invalid login") || authError.message.includes("invalid_credentials") || authError.message.includes("Invalid")) {
+          setErrorMsg(t("login_error_invalid") || "ইমেইল বা পাসওয়ার্ড সঠিক নয়");
+        } else if (authError.message.includes("Email not confirmed")) {
+          setErrorMsg(t("login_error_unverified") || "আপনার ইমেইল যাচাই করা হয়নি");
+        } else {
+          setErrorMsg(t("login_error_general") || "লগইন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।");
         }
+        return;
+      }
 
-        if (authData.user) {
-          const { data: profileData, error: profileError } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", authData.user.id)
-            .single();
+      if (!authData.user) {
+        setErrorMsg("লগইন ব্যর্থ হয়েছে");
+        return;
+      }
 
-          if (profileError || !profileData) {
-            setErrorMsg(t("profile_load_err"));
-            setLoading(false);
-            return;
-          }
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", authData.user.id)
+        .single();
 
-          setLocalCurrentUser(profileData);
-          setLoading(false);
-          if (profileData.role === 'tutor') {
-            navigate('/tutor/onboarding');
-          } else {
-            navigate('/feed');
-          }
-          return;
-        }
+      if (profileError || !profileData) {
+        setErrorMsg(t("profile_load_err"));
+        return;
+      }
+
+      setLocalCurrentUser(profileData);
+      
+      if (profileData.role === 'admin') {
+        navigate('/admin');
+      } else if (profileData.role === 'tutor') {
+        navigate('/tutor/onboarding'); // or feed? user says: tutor -> feed, but let's stick to feed
+        // Wait, user instructions say: 
+        // if (profile?.role === 'admin') navigate('/admin')
+        // else if (profile?.role === 'tutor') navigate('/feed')
+        // else navigate('/feed')
+        // But for tutor onboarding logic, maybe it should go to feed, and Feed handles the rest, or tutor/onboarding directly. 
+        // User explicitly wrote: navigate('/feed') for both tutor and guardian in the instruction snippet.
+        // Oh wait, in FIX 1 it says: if selectedRole === 'tutor' navigate('/tutor/onboarding') else navigate('/feed').
+        // In FIX 2 it says: if role === 'admin' -> /admin, else if tutor -> /feed, else -> /feed. 
+        // Actually, if a tutor hasn't completed onboarding, Feed redirects them to /tutor/onboarding automatically via ProtectedRoute or Feed logic. So /feed is fine.
+        navigate('/feed');
       } else {
-        // High-fidelity local simulation if Supabase is not configured
-        setTimeout(() => {
-          const simulatedUser: Profile = {
-            id: `simulated-user-${Date.now()}`,
-            role: "tutor",
-            full_name: "Demo User",
-            phone: "01700000000",
-            email: email,
-            phone_verified: true,
-            created_at: new Date().toISOString()
-          };
-          setLocalCurrentUser(simulatedUser);
-          setLoading(false);
-          navigate('/tutor/onboarding');
-        }, 1000);
+        navigate('/feed');
       }
     } catch (err: any) {
-      setErrorMsg(err?.message || t("login_err"));
+      setErrorMsg(err?.message || t("login_err") || "কিছু ভুল হয়েছে");
+    } finally {
       setLoading(false);
     }
   };

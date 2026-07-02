@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect, FormEvent } from "react";
 import { GraduationCap, MapPin, BookOpen, CircleDollarSign, PlusCircle, CheckCircle2, ListFilter, ClipboardList, Send, LogOut, FileCheck2, Users, Search, HelpCircle, ShieldCheck } from "lucide-react";
 import { useLanguage } from "../hooks/useLanguage";
-import { Profile, saveLocalProfile } from "../lib/supabase";
+import { Profile, supabase } from "../lib/supabase";
 import { SUBJECTS_OPTIONS, DHAKA_LOCATIONS } from "../lib/constants";
 
 interface DashboardProps {
@@ -81,17 +81,17 @@ export default function Dashboard({   }: DashboardProps) {
     );
   };
 
-  const handleSaveTutorProfile = (e: FormEvent) => {
+  const handleSaveTutorProfile = async (e: FormEvent) => {
     e.preventDefault();
     setProfileSaved(true);
 
-    // Save extended profile data into simulated localStorage db
-    const updatedProfile: Profile = {
-      ...currentUser,
-      full_name: currentUser.full_name,
-      updated_at: new Date().toISOString()
-    };
-    saveLocalProfile(updatedProfile);
+    try {
+      await supabase.from('profiles').update({
+        updated_at: new Date().toISOString()
+      }).eq('id', currentUser.id);
+    } catch (error) {
+      console.error(error);
+    }
 
     setTimeout(() => {
       setProfileSaved(false);
