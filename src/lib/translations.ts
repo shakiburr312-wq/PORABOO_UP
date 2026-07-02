@@ -161,8 +161,6 @@ export const translations: Record<string, Record<string, string>> = {
     "copied": "Copied ✓",
 
     // App level
-    "demo_title": "Demo Mode Active",
-    "demo_desc": "Cloud database (Supabase) is not yet configured. The app is currently running in local Demo Mode. Data will be saved locally on your device but won't be visible to others. To enable live sync, configure your Supabase credentials in the `.env` file.",
     "hide_banner": "Hide",
 
     // VerifyOtp + ForgotPassword
@@ -191,8 +189,6 @@ export const translations: Record<string, Record<string, string>> = {
     "remembered_pass": "Remembered your password?",
     "back_to_login_page": "Back to Login Page",
     "no_acc_found": "No account found with this email.",
-    "demo_rec_hints": "Demo Recovery:",
-    "demo_rec_desc": "Enter any email. A simulated success message will appear.",
     
     // Tutor Onboarding
     "tutor_onboarding": "Tutor Onboarding",
@@ -406,9 +402,6 @@ export const translations: Record<string, Record<string, string>> = {
     "ex_phone": "e.g: 01712345678",
     "ex_email": "e.g: name@example.com",
     "enter_pass": "Enter your password",
-    "demo_hints": "Demo login data:",
-    "demo_phone_tutor": "Phone: 01712345678 (Tutor) or 01987654321 (Guardian)",
-    "demo_pass": "Password: Use any password.",
     "create_new_account": "Create New Account",
     "want_new_account": "Want to create a new account?",
     "nav_notify": "Notify",
@@ -686,8 +679,6 @@ export const translations: Record<string, Record<string, string>> = {
     "copied": "কপি হয়েছে ✓",
 
     // App level
-    "demo_title": "ডেমো মোড সক্রিয়",
-    "demo_desc": "ক্লাউড ডেটাবেস (Supabase) এখনো কনফিগার করা হয়নি। অ্যাপটি বর্তমানে লোকাল ডেমো মোডে চলছে। ডেটা আপনার ডিভাইসে লোকালি সেভ হবে কিন্তু অন্যদের কাছে দৃশ্যমান হবে না। লাইভ ডেটাবেসের জন্য `.env` ফাইলে Supabase ক্রেডেন্সিয়াল সেট করুন।",
     "hide_banner": "লুকিয়ে রাখুন",
 
     // VerifyOtp + ForgotPassword
@@ -716,8 +707,6 @@ export const translations: Record<string, Record<string, string>> = {
     "remembered_pass": "পাসওয়ার্ড মনে পড়েছে?",
     "back_to_login_page": "লগইন পেজে ফিরুন",
     "no_acc_found": "এই ইমেইলে কোনো অ্যাকাউন্ট পাওয়া যায়নি।",
-    "demo_rec_hints": "ডেমো রিকভারি:",
-    "demo_rec_desc": "যেকোনো ইমেইল দিন। একটি সাকসেস মেসেজ দেখানো হবে।",
     
     // Tutor Onboarding
     "tutor_onboarding": "টিউটর অনবোর্ডিং",
@@ -931,9 +920,6 @@ export const translations: Record<string, Record<string, string>> = {
     "ex_phone": "যেমন: 01712345678",
     "ex_email": "যেমন: name@example.com",
     "enter_pass": "আপনার পাসওয়ার্ড দিন",
-    "demo_hints": "পরীক্ষামূলক ডেটা (ডেমো লগইন):",
-    "demo_phone_tutor": "মোবাইল: 01712345678 (টিউটর) বা 01987654321 (Guardian)",
-    "demo_pass": "পাসওয়ার্ড: যেকোনো পাসওয়ার্ড ব্যবহার করুন।",
     "create_new_account": "নতুন অ্যাকাউন্ট তৈরি করুন",
     "want_new_account": "নতুন অ্যাকাউন্ট তৈরি করতে চান?",
     // Navbar

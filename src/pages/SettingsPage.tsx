@@ -2,7 +2,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { User, Shield, Bell, Lock, Globe, Camera, Eye, EyeOff } from "lucide-react";
-import { Profile } from "../lib/supabase";
+import { Profile } from '@/lib/supabase';
 import { useLanguage } from "../hooks/useLanguage";
 
 interface SettingsPageProps {

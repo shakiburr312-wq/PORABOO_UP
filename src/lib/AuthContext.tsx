@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase, Profile, setLocalCurrentUser, getLocalCurrentUser } from './supabase';
+import { supabase, isSupabaseConfigured, Profile } from './supabase';
 import { User } from '@supabase/supabase-js';
 
 interface AuthContextType {
@@ -27,54 +27,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const fetchSession = async () => {
-      if (!supabase) {
-        setProfile(getLocalCurrentUser());
-        setTimeout(() => setLoading(false), 1000);
-        return;
-      }
-      
       try {
         const minDelay = new Promise(resolve => setTimeout(resolve, 1000));
         
-        let session = null;
-        if (supabase) {
-          const { data } = await supabase.auth.getSession();
-          session = data.session;
-        }
-
+        const { data: { session } } = await supabase.auth.getSession();
         setUser(session?.user ?? null);
         
-        if (session?.user && supabase) {
-          const { data: p } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-          if (p) {
-            setProfile(p);
-            setLocalCurrentUser(p);
-          } else {
-            setProfile(getLocalCurrentUser());
-          }
-        } else {
-          setProfile(null);
-        }
-        
-        await minDelay;
-      } catch (err) {
-        console.error("Supabase auth error", err);
-        setProfile(getLocalCurrentUser());
-      }
-      setLoading(false);
-    };
-
-    fetchSession();
-
-    let subscription: any = null;
-    
-    if (supabase) {
-      const auth = supabase.auth.onAuthStateChange(async (_, session) => {
-        setUser(session?.user ?? null);
         if (session?.user) {
           const { data: p } = await supabase
             .from('profiles')
@@ -83,18 +41,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             .single();
           if (p) {
             setProfile(p);
-            setLocalCurrentUser(p);
           } else {
-            setProfile(getLocalCurrentUser());
+            setProfile(null);
           }
         } else {
           setProfile(null);
-          setLocalCurrentUser(null);
         }
-        setLoading(false);
-      });
-      subscription = auth.data.subscription;
-    }
+        
+        await minDelay;
+      } catch (err) {
+        console.error("Supabase auth error", err);
+        setProfile(null);
+      }
+      setLoading(false);
+    };
+
+    fetchSession();
+
+    let subscription: any = null;
+    
+    const auth = supabase.auth.onAuthStateChange(async (_, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        const { data: p } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+        if (p) {
+          setProfile(p);
+        } else {
+          setProfile(null);
+        }
+      } else {
+        setProfile(null);
+      }
+      setLoading(false);
+    });
+    subscription = auth.data.subscription;
 
     return () => {
       if (subscription) subscription.unsubscribe();
@@ -102,18 +86,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = async () => {
-    if (supabase) {
-      await supabase.auth.signOut();
-    }
+    await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
-    setLocalCurrentUser(null);
     window.location.href = '/';
   };
   
   const updateProfile = (p: Profile) => {
     setProfile(p);
-    setLocalCurrentUser(p);
   };
 
   return (

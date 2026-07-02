@@ -1,7 +1,7 @@
 import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Profile } from "../lib/supabase";
+import { Profile } from '@/lib/supabase';
 import { Home, ClipboardList, Bell, Settings, LogOut, PlusCircle, Users } from "lucide-react";
 import { useLanguage } from "../hooks/useLanguage";
 

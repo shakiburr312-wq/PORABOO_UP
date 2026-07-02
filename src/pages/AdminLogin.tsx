@@ -2,7 +2,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, FormEvent } from "react";
 import { Lock, Eye, EyeOff, Shield } from "lucide-react";
-import { Profile, isSupabaseConfigured, setLocalCurrentUser, supabase } from "../lib/supabase";
+import { Profile, isSupabaseConfigured, supabase } from '@/lib/supabase';
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useLanguage } from "../hooks/useLanguage";
 
@@ -27,55 +27,38 @@ export default function AdminLogin() {
     setErrorMsg(null);
     setLoading(true);
 
-    if (isSupabaseConfigured && supabase) {
-      try {
-        const { data, error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+    try {
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        if (signInError) {
-          setErrorMsg(t("invalid_creds"));
-          setLoading(false);
-          return;
-        }
-
-        if (data.user) {
-          const { data: p } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', data.user.id)
-            .single();
-            
-          if (p) {
-            if (p.role !== 'admin') {
-              await supabase.auth.signOut();
-              setErrorMsg("Access denied. Admin only.");
-              setLoading(false);
-              return;
-            }
-            setLocalCurrentUser(p as Profile);
-            window.location.href = "/admin";
-          }
-        }
-      } catch (err: any) {
-        setErrorMsg(err.message || t("error"));
+      if (signInError) {
+        setErrorMsg(t("invalid_creds") || "Invalid credentials");
         setLoading(false);
+        return;
       }
-    } else {
-      // Offline fallback
-      setTimeout(() => {
-        setLoading(false);
-        const adminProfile: Profile = {
-          id: "admin-id",
-          full_name: "Admin User",
-          role: "admin",
-          email: email,
-          created_at: new Date().toISOString()
-        };
-        setLocalCurrentUser(adminProfile);
-        window.location.href = "/admin";
-      }, 1000);
+
+      if (data.user) {
+        const { data: p } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+          
+        if (p) {
+          if (p.role !== 'admin') {
+            await supabase.auth.signOut();
+            setErrorMsg("Access denied. Admin only.");
+            setLoading(false);
+            return;
+          }
+          window.location.href = "/admin";
+        }
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || t("error") || "An error occurred");
+      setLoading(false);
     }
   };
 

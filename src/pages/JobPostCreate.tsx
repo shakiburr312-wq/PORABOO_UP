@@ -1,7 +1,7 @@
 import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, FormEvent } from "react";
-import { Profile, supabase, isSupabaseConfigured } from "../lib/supabase";
+import { Profile, supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { SUBJECTS_OPTIONS, CLASS_LEVELS, MEDIUM_OPTIONS, DAYS_PER_WEEK, TIME_PREFERENCES, DHAKA_LOCATIONS, GENDER_PREFERENCES } from "../lib/constants";
 import { ArrowLeft, RefreshCw, Search, Check, X, MapPin } from "lucide-react";
 import { useLanguage } from "../hooks/useLanguage";

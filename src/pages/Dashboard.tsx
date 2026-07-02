@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect, FormEvent } from "react";
 import { GraduationCap, MapPin, BookOpen, CircleDollarSign, PlusCircle, CheckCircle2, ListFilter, ClipboardList, Send, LogOut, FileCheck2, Users, Search, HelpCircle, ShieldCheck } from "lucide-react";
 import { useLanguage } from "../hooks/useLanguage";
-import { Profile, supabase } from "../lib/supabase";
+import { Profile, supabase } from '@/lib/supabase';
 import { SUBJECTS_OPTIONS, DHAKA_LOCATIONS } from "../lib/constants";
 
 interface DashboardProps {

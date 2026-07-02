@@ -2,7 +2,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, FormEvent } from "react";
 import { Mail, Lock, ArrowLeft, Eye, EyeOff } from "lucide-react";
-import { Profile, setLocalCurrentUser, supabase } from "../lib/supabase";
+import { Profile, supabase, isSupabaseConfigured } from '@/lib/supabase';
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useLanguage } from "../hooks/useLanguage";
 
@@ -43,6 +43,12 @@ export default function Login() {
     setLoading(true);
 
     try {
+      if (!isSupabaseConfigured) {
+        setErrorMsg("সার্ভার সংযোগ ব্যর্থ হয়েছে");
+        setLoading(false);
+        return;
+      }
+
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: email.trim().toLowerCase(),
         password
@@ -75,8 +81,6 @@ export default function Login() {
         return;
       }
 
-      setLocalCurrentUser(profileData);
-      
       if (profileData.role === 'admin') {
         navigate('/admin');
       } else if (profileData.role === 'tutor') {

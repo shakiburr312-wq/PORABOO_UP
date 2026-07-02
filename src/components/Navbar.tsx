@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../lib/AuthContext";
 import React, { useState, useEffect, useRef } from "react";
 import { Menu, X, LogOut, User, ShieldCheck, Bell, Settings, Home, Briefcase } from "lucide-react";
-import { Profile } from "../lib/supabase";
+import { Profile } from '@/lib/supabase';
 import { useLanguage } from "../hooks/useLanguage";
 
 interface NavbarProps {

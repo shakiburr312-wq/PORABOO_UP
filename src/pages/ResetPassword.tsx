@@ -1,7 +1,7 @@
 import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Lock, CheckCircle2, ShieldAlert, RefreshCw, KeyRound, Eye, EyeOff } from "lucide-react";
-import { supabase } from "../lib/supabase";
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { useLanguage } from "../hooks/useLanguage";
 
 export default function ResetPassword() {
@@ -35,6 +35,11 @@ export default function ResetPassword() {
     setLoading(true);
 
     try {
+      if (!isSupabaseConfigured) {
+        setErrorMsg("সার্ভার সংযোগ ব্যর্থ হয়েছে");
+        setLoading(false);
+        return;
+      }
       const { error } = await supabase.auth.updateUser({ password: newPassword });
 
       if (error) {

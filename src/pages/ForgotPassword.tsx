@@ -2,7 +2,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, FormEvent } from "react";
 import { Mail, ArrowLeft, Send, CheckCircle2, ShieldAlert, RefreshCw } from "lucide-react";
-import { supabase } from "../lib/supabase";
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 import { useLanguage } from "../hooks/useLanguage";
 
@@ -27,6 +27,11 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
+      if (!isSupabaseConfigured) {
+        setErrorMsg("সার্ভার সংযোগ ব্যর্থ হয়েছে");
+        setLoading(false);
+        return;
+      }
       const { error } = await supabase.auth.resetPasswordForEmail(
         email.trim().toLowerCase(),
         {

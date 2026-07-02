@@ -2,7 +2,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import { Camera, MapPin, GraduationCap, Briefcase, BookOpen, Layers, Globe, DollarSign, Edit2, Link as LinkIcon, Edit, Users, X, Plus } from "lucide-react";
-import { isSupabaseConfigured, supabase, Profile } from "../lib/supabase";
+import { isSupabaseConfigured, supabase, Profile } from '@/lib/supabase';
 import { useLanguage } from "../hooks/useLanguage";
 import BounceDots from "../components/BounceDots";
 import Navbar from "../components/Navbar";
@@ -114,13 +114,7 @@ export default function ProfilePage() {
           await supabase.from('profiles').update({ avatar_url: urlData.publicUrl }).eq('id', profileId);
           setProfileData({ ...profileData, avatar_url: urlData.publicUrl });
           if (isOwnProfile) {
-            ({ ...currentUser, avatar_url: urlData.publicUrl } as Profile);
-            const local = localStorage.getItem("poraboo_current_user");
-            if (local) {
-              const parsed = JSON.parse(local);
-              parsed.avatar_url = urlData.publicUrl;
-              localStorage.setItem("poraboo_current_user", JSON.stringify(parsed));
-            }
+            updateProfile({ avatar_url: urlData.publicUrl });
           }
         }
       }

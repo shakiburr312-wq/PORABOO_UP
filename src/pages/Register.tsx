@@ -2,7 +2,7 @@ import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, FormEvent } from "react";
 import { GraduationCap, Users, ShieldCheck, Check, ArrowRight, ArrowLeft, Phone, Mail, MapPin, KeyRound, Eye, EyeOff, Lock } from "lucide-react";
-import { supabase } from "../lib/supabase";
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useLanguage } from "../hooks/useLanguage";
@@ -76,6 +76,12 @@ export default function Register({  }: RegisterProps) {
     if (password !== confirmPassword) { setErrorMsg(t("pass_mismatch") || "পাসওয়ার্ড মিলছে না"); return; }
 
     setLoading(true);
+
+    if (!isSupabaseConfigured) {
+      setErrorMsg("সার্ভার সংযোগ ব্যর্থ হয়েছে");
+      setLoading(false);
+      return;
+    }
 
     try {
       const { data, error: signUpError } = await supabase.auth.signUp({

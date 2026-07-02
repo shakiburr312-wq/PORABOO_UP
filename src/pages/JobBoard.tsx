@@ -1,7 +1,7 @@
 import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Profile, supabase, isSupabaseConfigured } from "../lib/supabase";
+import { Profile, supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { Search, MapPin, Clock, Calendar, GraduationCap, DollarSign, Filter, ChevronDown, UserRound } from "lucide-react";
 import { SUBJECTS_OPTIONS, DHAKA_LOCATIONS, CLASS_LEVELS } from "../lib/constants";
 import { useLanguage } from "../hooks/useLanguage";

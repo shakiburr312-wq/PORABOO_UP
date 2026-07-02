@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { supabase, setLocalCurrentUser } from "../lib/supabase";
+import { supabase } from '@/lib/supabase';
 import PageLoader from "../components/PageLoader";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../hooks/useLanguage";
@@ -10,10 +10,6 @@ export default function AuthCallback() {
 
   useEffect(() => {
     const handleAuth = async () => {
-      if (!supabase) {
-        navigate("/");
-        return;
-      }
       // Supabase automatically handles the session on this route if tokens are in URL
       const { data: { session }, error } = await supabase.auth.getSession();
       
@@ -26,7 +22,6 @@ export default function AuthCallback() {
           .single();
           
         if (profile) {
-          setLocalCurrentUser(profile);
           if (profile.role === 'tutor') {
             navigate("/tutor/onboarding");
           } else {

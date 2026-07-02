@@ -1,7 +1,7 @@
 import { useAuth } from "../lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { Profile, supabase, isSupabaseConfigured } from "../lib/supabase";
+import { Profile, supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { 
   Heart, 
   MessageCircle, 
